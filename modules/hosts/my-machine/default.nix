@@ -2,14 +2,14 @@
   flake.nixosConfigurations.myMachine = inputs.nixpkgs.lib.nixosSystem {
     system = "x86_64-linux";
 
-    # Isso garante que o 'inputs' do Flake chegue lá embaixo
+    # Repassamos o self e inputs para os arquivos que o Maestro importar
     specialArgs = { inherit self inputs; };
 
     modules = [
-      # MUDANÇA AQUI: Pedimos o 'inputs' explicitamente nos argumentos do módulo
-      ({ inputs, ... }: {
+      # MUDANÇA AQUI: Tiramos o 'inputs' dos argumentos locais.
+      # Assim ele usa o 'inputs' lá da primeira linha do arquivo.
+      ({ ... }: {
         nixpkgs.overlays = [
-          # Tentaremos 'overlays.niri' e, se falhar, você pode testar 'overlays.default'
           inputs.niri.overlays.niri
         ];
       })
