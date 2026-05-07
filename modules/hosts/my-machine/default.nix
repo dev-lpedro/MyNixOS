@@ -5,13 +5,13 @@
     specialArgs = { inherit self inputs; };
 
     modules = [
-      # Usamos os argumentos que o próprio NixOS recebe
       ({ inputs, ... }: {
-        # Testaremos o 'default' que é mais comum em versões novas
         nixpkgs.overlays = [ inputs.niri.overlays.default ];
       })
 
       self.nixosModules.myMachineConfiguration
+
+      ./hardware.nix
     ];
   };
 }

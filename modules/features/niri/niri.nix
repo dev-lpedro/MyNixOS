@@ -2,7 +2,6 @@
   flake.nixosModules.niri = { pkgs, lib, ... }: {
     programs.niri = {
       enable = true;
-      # Busca o pacote customizado definido abaixo
       package = self.packages.${pkgs.stdenv.hostPlatform.system}.myNiri;
     };
   };
@@ -13,33 +12,126 @@
 
       settings = {
         # ==========================================
-        # HOT RELOAD
+        # HOT RELOAD (Permanente)
         # ==========================================
-        # Nota: O uso de ~/ pode falhar no build se o wrapper validar o arquivo.
-        # Se o erro "Homeless Shelter" persistir, comente a linha abaixo.
-        #include = [ "/home/leonardo/myNixOS/modules/features/niri/imports.kdl" ];
+        # O shell expandirá o ~/ no runtime, funcionando para qualquer usuário.
+        #include = [ "~/myNixOS/modules/features/niri/imports.kdl" ];
 
         spawn-at-startup = [
-          # CORREÇÃO: Strings simples, sem as chaves { command = ... }
-          (lib.getExe self'.packages.myNoctalia)
-          "${pkgs.kdePackages.polkit-kde-agent-1}/libexec/polkit-kde-authentication-agent-1"
+          [ "bash" "-c" "sleep 1 && ${lib.getExe self'.packages.myNoctalia}" ]
+          [ "${pkgs.kdePackages.polkit-kde-agent-1}/libexec/polkit-kde-authentication-agent-1" ]
+
+          # ==========================================
+          # MOTOR DO CLIPBOARD (Histórico de cópias)
+          # ==========================================
+          [ "bash" "-c" "wl-paste --watch cliphist store" ]
         ];
 
         xwayland-satellite.path = lib.getExe pkgs.xwayland-satellite;
-        input.keyboard.xkb.layout = "br";
-        layout.gaps = 5;
 
         # ==========================================
-        # CONFIGURAÇÃO DE MONITORES
+        # INPUTS & CURSOR
         # ==========================================
+        input = {
+          keyboard = {
+            xkb.layout = "br";
+            repeat-delay = 250;
+            repeat-rate = 50;
+          };
+          #touchpad = {
+          #  tap = true;
+          #  tap-button-map = "left-right-middle";
+          #  natural-scroll = true;
+          #};
+          #mouse = {
+          #  accel-profile = "flat";
+          #  natural-scroll = true;
+          #};
+          #mod-key = "Super";
+          #mod-key-nested = "Alt";
+          #workspace-auto-back-and-forth = true;
+          #warp-mouse-to-focus = true;
+          #focus-follows-mouse.max-scroll-amount = "5%";
+        };
+
+        cursor = {
+          xcursor-theme = "capitaine-cursors-light";
+          xcursor-size = 24;
+          hide-when-typing = true;
+        };
+
+        # ==========================================
+        # LAYOUT & VISUAIS
+        # ==========================================
+        layout = {
+          gaps = 12;
+          center-focused-column = "never";
+
+          default-column-width.proportion = 0.5;
+          preset-column-widths = [
+            { proportion = 0.33333; }
+            { proportion = 0.5; }
+            { proportion = 0.66667; }
+          ];
+
+          border = {
+            width = 4;
+            active-color = "#707070";
+            inactive-color = "#d0d0d0";
+            urgent-color = "#cc4444";
+          };
+
+          # Simplificado para cores sólidas temporariamente!
+          focus-ring = {
+            width = 3;
+            active-color = "#D31F25";
+            inactive-color = "#707070";
+          };
+        };
+
+        # ==========================================
+        # REGRAS DE JANELA & LAYER (Transparência)
+        # ==========================================
+        window-rules = [
+          {
+            geometry-corner-radius = 16.0;
+            clip-to-geometry = true;
+          }
+          {
+            matches = [ { is-active = false; } ];
+            opacity = 0.9;
+          }
+        ];
+
+        layer-rules = [
+          { matches = [ { namespace = "quickshell:iiBackdrop"; } ]; place-within-backdrop = true; opacity = 1.0; }
+          { matches = [ { namespace = "quickshell:wBackdrop"; } ]; place-within-backdrop = true; opacity = 1.0; }
+        ];
+
+        # ==========================================
+        # ANIMAÇÕES (Sincronizadas com Noctalia)
+        # ==========================================
+#         animations = {
+#           workspace-switch.spring = { damping-ratio = 0.78; stiffness = 600; epsilon = 0.0001; };
+#           window-open.spring = { damping-ratio = 0.82; stiffness = 500; epsilon = 0.0001; };
+#           window-close.spring = { damping-ratio = 0.88; stiffness = 900; epsilon = 0.0001; };
+#           horizontal-view-movement.spring = { damping-ratio = 0.80; stiffness = 550; epsilon = 0.0001; };
+#           window-movement.spring = { damping-ratio = 0.85; stiffness = 650; epsilon = 0.0001; };
+#           window-resize.spring = { damping-ratio = 0.88; stiffness = 700; epsilon = 0.0001; };
+#           config-notification-open-close.spring = { damping-ratio = 0.90; stiffness = 800; epsilon = 0.0001; };
+#           screenshot-ui-open.spring = { damping-ratio = 0.85; stiffness = 750; epsilon = 0.0001; };
+#         };
+
+        # ==========================================
+        # MONITORES
+        # ==========================================
+
         outputs = {
           "LG Electronics E1941 0x01010101" = {
             mode = "1360x768@60.015";
-            #position = { x = 0; y = 0; };
           };
           "eDP-1" = {
             scale = 1.2;
-            #position = { x = 1360; y = 0; };
           };
         };
 
@@ -47,21 +139,35 @@
         # ATALHOS DO TECLADO (Binds)
         # ==========================================
         binds = {
-          # --- SISTEMA E SHELL ---
+          # --- SISTEMA E NOCTALIA ---
           "Mod+Shift+E".quit = {};
           "Mod+Escape".toggle-keyboard-shortcuts-inhibit = {};
-          "Ctrl+Super+Alt+R".spawn-sh = "pkill qs; qs -c noctalia-shell &";
-          "Mod+Alt+L".spawn-sh = "qs -c noctalia-shell ipc call lockScreen lock";
+
+          # Reiniciar Noctalia (Permanent Fix)
+          #"Ctrl+Super+Alt+R".spawn-sh = "pkill -f noctalia-shell; ${lib.getExe self'.packages.myNoctalia} &";
+
+          # Menus do Noctalia (Usando IPC direto)
           "Mod+Space".spawn-sh = "${lib.getExe self'.packages.myNoctalia} ipc call launcher toggle";
+          "Mod+F1".spawn-sh = "${lib.getExe self'.packages.myNoctalia} ipc call shortcuts toggle";
+          "Mod+Shift+Q".spawn-sh = "${lib.getExe self'.packages.myNoctalia} ipc call sessionMenu toggle";
+          "Mod+Alt+L".spawn-sh = "${lib.getExe self'.packages.myNoctalia} ipc call lockScreen lock";
+          "Mod+V".spawn-sh = "${lib.getExe self'.packages.myNoctalia} ipc call launcher clipboard";
+          "Ctrl+Shift+Escape".spawn-sh = "${lib.getExe self'.packages.myNoctalia} ipc call systemMonitor toggle";
+          "Mod+C".spawn-sh = "${lib.getExe self'.packages.myNoctalia} ipc call controlCenter toggle";
+
           "Mod+Tab".toggle-overview = {};
-          "Mod+Shift+Slash".spawn-sh = "${lib.getExe self'.packages.myNoctalia} ipc call shortcuts toggle";
 
-          # --- ATALHOS CUSTOMIZADOS DO FLAKE ---
-          "Mod+I".spawn-sh = "kate /home/leonardo/myNixOS/modules/hosts/my-machine/packages/pkgs_users.nix";
-          "Mod+Shift+I".spawn-sh = "kate /home/leonardo/myNixOS/modules/hosts/my-machine/packages/pkgs_system.nix";
+          # --- ATALHOS DO FLAKE (EDIÇÃO) ---
+          # Caminhos corrigidos para a nova estrutura
+          "Mod+I".spawn-sh = "kate ~/myNixOS/modules/features/packages/pkgs_users.nix";
+          "Mod+Shift+I".spawn-sh = "kate ~/myNixOS/modules/features/packages/pkgs_system.nix";
 
-          # Super + R = Rebuild automático
-          "Mod+R".spawn-sh = "kitty -- fish -c 'cd ~/myNixOS; git add .; sudo nixos-rebuild switch --flake .#myMachine; echo \"\\n[ Rebuild Finalizado! Pressione ENTER para fechar ]\"; read'";
+          # --- REBUILD AUTOMÁTICO ---
+          # Mod + R = Teste (Não salva no boot)
+          "Mod+R".spawn-sh = "kitty -- fish -c 'cd ~/myNixOS; git add .; sudo nixos-rebuild test --flake .#myMachine; echo \"\\n[ Teste Finalizado! ]\"; read'";
+
+          # Mod + Shift + Ctrl + R = Switch (Torna a config padrão)
+          "Mod+Shift+Control+R".spawn-sh = "kitty -- fish -c 'cd ~/myNixOS; git add .; sudo nixos-rebuild switch --flake .#myMachine; echo \"\\n[ Sistema Atualizado com Sucesso! ]\"; read'";
 
           # --- APLICATIVOS ---
           "Mod+T".spawn-sh = lib.getExe pkgs.kitty;
@@ -69,7 +175,7 @@
           "Super+E".spawn-sh = "dolphin";
           "Super+W".spawn-sh = "xdg-open https://google.com";
 
-          # --- GERENCIAMENTO DE JANELAS ---
+          # --- JANELAS ---
           "Mod+Q".close-window = {};
           "Mod+D".maximize-column = {};
           "Mod+F".fullscreen-window = {};
@@ -79,47 +185,24 @@
           "Mod+Right".focus-column-right = {};
           "Mod+Up".focus-window-up = {};
           "Mod+Down".focus-window-down = {};
-          "Mod+H".focus-column-left = {};
-          "Mod+J".focus-window-down = {};
-          "Mod+K".focus-window-up = {};
-          "Mod+L".focus-column-right = {};
-
-          "Mod+Shift+Left".move-column-left = {};
-          "Mod+Shift+Right".move-column-right = {};
-          "Mod+Shift+Up".move-window-up = {};
-          "Mod+Shift+Down".move-window-down = {};
-
-          # --- WORKSPACES ---
-          "Mod+1".focus-workspace = 1;
-          "Mod+2".focus-workspace = 2;
-          "Mod+3".focus-workspace = 3;
-          "Mod+4".focus-workspace = 4;
-          "Mod+5".focus-workspace = 5;
-
-          "Mod+Shift+1".move-column-to-workspace = 1;
-          "Mod+Shift+2".move-column-to-workspace = 2;
-          "Mod+Shift+3".move-column-to-workspace = 3;
-          "Mod+Shift+4".move-column-to-workspace = 4;
-          "Mod+Shift+5".move-column-to-workspace = 5;
 
           # --- SCREENSHOTS ---
           "Print".screenshot = {};
           "Ctrl+Print".screenshot-screen = {};
           "Alt+Print".screenshot-window = {};
+          # Novo: Print de área selecionada (Super + Shift + S)
+          "Mod+Shift+S".screenshot = {};
 
-          # --- SCRIPTS ---
-          "Ctrl+Alt+Z".spawn-sh = "fish /home/leonardo/myNixOS/modules/features/scripts/power_manager.fish --toggle";
-          "Alt+C".spawn-sh = "fish /home/leonardo/myNixOS/modules/features/scripts/power_manager.fish --save";
-
-          # --- TECLAS DE HARDWARE ---
+          # --- AUDIO E BRILHO ---
           "XF86AudioRaiseVolume".spawn-sh = "wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+";
           "XF86AudioLowerVolume".spawn-sh = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-";
           "XF86AudioMute".spawn-sh = "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
           "XF86MonBrightnessUp".spawn-sh = "brightnessctl set 5%+";
           "XF86MonBrightnessDown".spawn-sh = "brightnessctl set 5%-";
-          "XF86AudioPlay".spawn-sh = "playerctl play-pause";
-          "XF86AudioNext".spawn-sh = "playerctl next";
-          "XF86AudioPrev".spawn-sh = "playerctl previous";
+
+          #  --- GRAVAÇÃO E ENERGIA ---
+          "Ctrl+Alt+Z".spawn-sh = "fish ~/myNixOS/modules/features/scripts/power_manager.fish --toggle";
+          "Alt+C".spawn-sh = "fish ~/myNixOS/modules/features/scripts/power_manager.fish --save";
         };
       };
     };

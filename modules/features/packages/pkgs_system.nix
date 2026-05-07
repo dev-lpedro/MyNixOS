@@ -19,5 +19,25 @@
     upower                    # Ler status da bateria
     wl-clipboard              # Área de transferência (Ctrl+C / Ctrl+V) no Wayland
     dart-sass                 # Renderizar cores em alguns temas do Quickshell
+
+    cliphist
+    unzip
+    pciutils
+    usbutils
+
+    # Fontes (Instalação dos binários)
+    font-awesome
+    cantarell-fonts
+    roboto
+    material-symbols
+
+
+  ];
+
+  fonts.packages = with pkgs; [
+    font-awesome
+    cantarell-fonts
+    roboto
+    material-symbols
   ];
 }

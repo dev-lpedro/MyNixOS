@@ -6,7 +6,6 @@
       # ==========================================
       # 1. HARDWARE E DRIVERS ESPECÍFICOS DESTA MÁQUINA
       # ==========================================
-      self.nixosModules.myMachineHardware
       ./conf_machine.nix
 
       # ==========================================
@@ -16,7 +15,7 @@
       ../../features/config/conf_users.nix
 
       # ==========================================
-      # 3. PACOTES UNIVERSAIS
+      # 3. PACOTES
       # ==========================================
       ../../features/packages/pkgs_system.nix
       ../../features/packages/pkgs_users.nix

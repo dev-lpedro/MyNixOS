@@ -12,6 +12,18 @@
   networking.networkmanager.enable = true;
 
   # ==========================================
+  # BLUETOOTH
+  # ==========================================
+  # Habilita os drivers e o serviço do Bluetooth
+  hardware.bluetooth.enable = true;
+
+  # Liga o Bluetooth automaticamente quando o PC iniciar
+  hardware.bluetooth.powerOnBoot = true;
+
+  # Habilita o Blueman (Gerenciador gráfico e Applet de bandeja)
+  services.blueman.enable = true;
+
+  # ==========================================
   # IDIOMA, LOCALIZAÇÃO E TECLADO
   # ==========================================
   time.timeZone = "America/Sao_Paulo";
@@ -60,6 +72,7 @@
   zramSwap.enable = true;
   services.printing.enable = true;
   programs.fish.enable = true;
+  services.flatpak.enable = true;
 
   # ==========================================
   # VARIÁVEIS DE AMBIENTE GERAIS

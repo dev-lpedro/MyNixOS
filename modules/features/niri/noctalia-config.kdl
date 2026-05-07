@@ -1,0 +1,210 @@
+"window-rule"  {
+  "clip-to-geometry" true
+  "geometry-corner-radius" 16.0
+}
+"window-rule"  {
+  "match" "is-active"=false
+  "opacity" 0.9
+}
+"layer-rule"  {
+  "match" "namespace"="quickshell:iiBackdrop"
+  "opacity" 1.0
+  "place-within-backdrop" true
+}
+"layer-rule"  {
+  "match" "namespace"="quickshell:wBackdrop"
+  "opacity" 1.0
+  "place-within-backdrop" true
+}
+"spawn-at-startup" "bash" "-c" "sleep 1 && /nix/store/sn1di1na513mgfkncjna7l5v4wxbvya3-noctalia-shell-4.7.6/bin/noctalia-shell"
+"spawn-at-startup" "/nix/store/p0pj83hq3nx2kb9xxqpd3p8qw303dzjs-polkit-kde-agent-1-6.6.4/libexec/polkit-kde-authentication-agent-1"
+"spawn-at-startup" "bash" "-c" "wl-paste --watch cliphist store"
+"output" "LG Electronics E1941 0x01010101" {
+  "mode" "1360x768@60.015"
+}
+"output" "eDP-1" {
+  "scale" 1.2
+}
+"binds"  {
+  "Alt+C"  {
+    "spawn-sh" "fish ~/myNixOS/modules/features/scripts/power_manager.fish --save"
+  }
+  "Alt+Print"  {
+    "screenshot-window"  {
+
+    }
+  }
+  "Ctrl+Alt+Z"  {
+    "spawn-sh" "fish ~/myNixOS/modules/features/scripts/power_manager.fish --toggle"
+  }
+  "Ctrl+Print"  {
+    "screenshot-screen"  {
+
+    }
+  }
+  "Ctrl+Shift+Escape"  {
+    "spawn-sh" "/nix/store/sn1di1na513mgfkncjna7l5v4wxbvya3-noctalia-shell-4.7.6/bin/noctalia-shell ipc call systemMonitor toggle"
+  }
+  "Mod+A"  {
+    "toggle-window-floating"  {
+
+    }
+  }
+  "Mod+Alt+L"  {
+    "spawn-sh" "/nix/store/sn1di1na513mgfkncjna7l5v4wxbvya3-noctalia-shell-4.7.6/bin/noctalia-shell ipc call lockScreen lock"
+  }
+  "Mod+C"  {
+    "spawn-sh" "/nix/store/sn1di1na513mgfkncjna7l5v4wxbvya3-noctalia-shell-4.7.6/bin/noctalia-shell ipc call controlCenter toggle"
+  }
+  "Mod+D"  {
+    "maximize-column"  {
+
+    }
+  }
+  "Mod+Down"  {
+    "focus-window-down"  {
+
+    }
+  }
+  "Mod+Escape"  {
+    "toggle-keyboard-shortcuts-inhibit"  {
+
+    }
+  }
+  "Mod+F"  {
+    "fullscreen-window"  {
+
+    }
+  }
+  "Mod+F1"  {
+    "spawn-sh" "/nix/store/sn1di1na513mgfkncjna7l5v4wxbvya3-noctalia-shell-4.7.6/bin/noctalia-shell ipc call shortcuts toggle"
+  }
+  "Mod+I"  {
+    "spawn-sh" "kate ~/myNixOS/modules/features/packages/pkgs_users.nix"
+  }
+  "Mod+Left"  {
+    "focus-column-left"  {
+
+    }
+  }
+  "Mod+Q"  {
+    "close-window"  {
+
+    }
+  }
+  "Mod+R"  {
+    "spawn-sh" "kitty -- fish -c 'cd ~/myNixOS; git add .; sudo nixos-rebuild test --flake .#myMachine; echo \"\\n[ Teste Finalizado! ]\"; read'"
+  }
+  "Mod+Return"  {
+    "spawn-sh" "/nix/store/myjlf11fwy8yw3127hxsfyidxz6srg6x-kitty-0.46.2/bin/kitty"
+  }
+  "Mod+Right"  {
+    "focus-column-right"  {
+
+    }
+  }
+  "Mod+Shift+Control+R"  {
+    "spawn-sh" "kitty -- fish -c 'cd ~/myNixOS; git add .; sudo nixos-rebuild switch --flake .#myMachine; echo \"\\n[ Sistema Atualizado com Sucesso! ]\"; read'"
+  }
+  "Mod+Shift+E"  {
+    "quit"  {
+
+    }
+  }
+  "Mod+Shift+I"  {
+    "spawn-sh" "kate ~/myNixOS/modules/features/packages/pkgs_system.nix"
+  }
+  "Mod+Shift+Q"  {
+    "spawn-sh" "/nix/store/sn1di1na513mgfkncjna7l5v4wxbvya3-noctalia-shell-4.7.6/bin/noctalia-shell ipc call sessionMenu toggle"
+  }
+  "Mod+Shift+S"  {
+    "screenshot"  {
+
+    }
+  }
+  "Mod+Space"  {
+    "spawn-sh" "/nix/store/sn1di1na513mgfkncjna7l5v4wxbvya3-noctalia-shell-4.7.6/bin/noctalia-shell ipc call launcher toggle"
+  }
+  "Mod+T"  {
+    "spawn-sh" "/nix/store/myjlf11fwy8yw3127hxsfyidxz6srg6x-kitty-0.46.2/bin/kitty"
+  }
+  "Mod+Tab"  {
+    "toggle-overview"  {
+
+    }
+  }
+  "Mod+Up"  {
+    "focus-window-up"  {
+
+    }
+  }
+  "Mod+V"  {
+    "spawn-sh" "/nix/store/sn1di1na513mgfkncjna7l5v4wxbvya3-noctalia-shell-4.7.6/bin/noctalia-shell ipc call launcher clipboard"
+  }
+  "Print"  {
+    "screenshot"  {
+
+    }
+  }
+  "Super+E"  {
+    "spawn-sh" "dolphin"
+  }
+  "Super+W"  {
+    "spawn-sh" "xdg-open https://google.com"
+  }
+  "XF86AudioLowerVolume"  {
+    "spawn-sh" "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+  }
+  "XF86AudioMute"  {
+    "spawn-sh" "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+  }
+  "XF86AudioRaiseVolume"  {
+    "spawn-sh" "wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+"
+  }
+  "XF86MonBrightnessDown"  {
+    "spawn-sh" "brightnessctl set 5%-"
+  }
+  "XF86MonBrightnessUp"  {
+    "spawn-sh" "brightnessctl set 5%+"
+  }
+}
+"cursor"  {
+  "hide-when-typing" true
+  "xcursor-size" 24
+  "xcursor-theme" "capitaine-cursors-light"
+}
+"input"  {
+  "keyboard"  {
+    "repeat-delay" 250
+    "repeat-rate" 50
+    "xkb"  {
+      "layout" "br"
+    }
+  }
+}
+"layout"  {
+  "border"  {
+    "active-color" "#707070"
+    "inactive-color" "#d0d0d0"
+    "urgent-color" "#cc4444"
+    "width" 4
+  }
+  "center-focused-column" "never"
+  "default-column-width"  {
+    "proportion" 0.5
+  }
+  "focus-ring"  {
+    "active-color" "#D31F25"
+    "inactive-color" "#707070"
+    "width" 3
+  }
+  "gaps" 12
+  "preset-column-widths"  {
+    "proportion" 0.33333
+    "proportion" 0.5
+    "proportion" 0.66667
+  }
+}
+"xwayland-satellite"  {
+  "path" "/nix/store/krpwggjdn6h2d3kyrybfnz5wzldlq8az-xwayland-satellite-0.8.1/bin/xwayland-satellite"
+}

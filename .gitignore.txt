@@ -1,0 +1,12 @@
+# Arquivos de resultado do Nix
+result
+result-*
+
+# Arquivos temporários de editores de texto (Kate, Nano, Vim)
+*~
+*.swp
+*.bak
+.direnv/
+
+# Se você gerar chaves ou senhas locais que não devem ir pro GitHub
+secrets/

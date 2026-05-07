@@ -1,20 +1,16 @@
-# modules/hosts/my-machine/packages/pkgs_users.nix
 { pkgs, ... }: {
+  imports = [
+    ./pkgs_dev.nix
+    ./pkgs_internet.nix
+    ./pkgs_media.nix
+    ./pkgs_gaming.nix
+  ];
 
-  # ==========================================
-  # PACOTES PESSOAIS
-  # ==========================================
-
-  users.users.leonardo.packages = with pkgs; [
-    # Navegadores
-    firefox
-
-    # Desenvolvimento
-    vscode
-
-    # Edição de texto e leitura
-    kdePackages.kate
-
-    github-desktop
+  environment.systemPackages = with pkgs; [
+    # ==========================================
+    # LABORATÓRIO (Pacotes novos/em teste)
+    # ==========================================
+    fastfetch
+    # Adicione novos apps aqui antes de categorizá-los
   ];
 }
