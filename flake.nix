@@ -8,6 +8,11 @@
 
     # Mantivemos a URL aqui só para o seu arquivo flake.lock não reclamar
     import-tree.url = "github:vic/import-tree";
+
+    dms = {
+      url = "github:AvengeMedia/DankMaterialShell/stable";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs: inputs.flake-parts.lib.mkFlake {inherit inputs;} {
@@ -18,8 +23,18 @@
       ./modules/parts.nix
       ./modules/hosts/my-machine/default.nix
       ./modules/hosts/my-machine/configuration.nix
-      ./modules/features/niri/niri.nix
-      ./modules/features/niri/noctalia.nix
+      # ==========================================
+        # OPÇÃO 1: AMBIENTE NOCTALIA
+        # (Comente estas duas linhas para desativar)
+        # ==========================================
+        # ./modules/features/niri/noctalia.nix
+        # ./modules/features/niri/niri-noctalia.nix
+
+        # ==========================================
+        # OPÇÃO 2: AMBIENTE DANK MATERIAL SHELL (DMS)
+        # (Descomente esta linha para ativar)
+        # ==========================================
+        ./modules/features/niri/niri-dms.nix
     ];
 
   };
