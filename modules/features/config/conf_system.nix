@@ -84,6 +84,24 @@
   };
 
   # ==========================================
+  # LIMPEZA AUTOMÁTICA DE GERAÇÕES / NIX STORE
+  # ==========================================
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 7d"; # Remove arquivos de backups com mais de 7 dias
+  };
+  nix.settings.auto-optimise-store = true; # Deduplica arquivos idênticos no disco Btrfs
+
+  # ==========================================
+  # DISTROBOX E PODMAN (Para projetos legados)
+  # ==========================================
+  virtualisation.podman = {
+    enable = true;
+    dockerCompat = true; # Cria suporte a comandos docker
+  };
+
+  # ==========================================
   # APLICATIVOS DE INFRAESTRUTURA E KDE
   # ==========================================
   environment.systemPackages = with pkgs; [
@@ -96,6 +114,8 @@
     direnv                               # Gerenciador de ambientes virtuais automáticos
     devenv                               # Ferramenta para shells de desenvolvimento
     blueman                              # Gerenciador gráfico de dispositivos Bluetooth
+    distrobox                            # Executa distros em contêineres isolados
+    podman                               # Motor de contêineres para o Distrobox
   ];
 
   # Ativa o suporte ao direnv no shell

@@ -27,6 +27,7 @@
     pciutils
     usbutils
 
+    gparted
   ];
 
   # Instalação declarativa de fontes do sistema

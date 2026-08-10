@@ -27,6 +27,10 @@ result-*
 secrets/
 *.pem
 *.key
+
+# ==========================================
+# OUTROS
+# ==========================================
 ./modules/features/niri/cfg_noctalia/plugins
 /modules/features/niri/cfg_noctalia/plugins
 result

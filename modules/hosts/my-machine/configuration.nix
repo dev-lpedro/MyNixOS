@@ -14,10 +14,11 @@
 
     # 3. Listas categorizadas de pacotes
     ../../features/packages/pkgs_system.nix
-    ../../features/packages/pkgs_user.nix
+    ../../features/packages/pkgs_users.nix
 
     # 4. Interface gráfica Niri + Noctalia Shell + Home Manager
-    ../../features/niri/niri-noctalia.nix
+    ../../features/niri/niri.nix
+    ../../features/niri/noctalia.nix
   ];
 
 }
