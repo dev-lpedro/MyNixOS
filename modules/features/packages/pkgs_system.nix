@@ -1,4 +1,7 @@
 # modules/hosts/my-machine/packages/pkgs_system.nix
+# ==============================================================================
+# Pacotes de Sistema e Utilitários
+# ==============================================================================
 { pkgs, ... }: {
 
   environment.systemPackages = with pkgs; [
@@ -9,7 +12,6 @@
 
     # Laboratório do Niri e Noctalia
     alacritty                 # Terminal leve
-    kitty                     # Seu terminal configurado no Niri
     kdePackages.polkit-kde-agent-1 # Janelinha de senha de administrador
 
     # Ferramentas do sistema para os widgets do Noctalia funcionarem
@@ -25,15 +27,9 @@
     pciutils
     usbutils
 
-    # Fontes (Instalação dos binários)
-    font-awesome
-    cantarell-fonts
-    roboto
-    material-symbols
-
-
   ];
 
+  # Instalação declarativa de fontes do sistema
   fonts.packages = with pkgs; [
     font-awesome
     cantarell-fonts

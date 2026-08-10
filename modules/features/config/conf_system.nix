@@ -1,87 +1,103 @@
-{ config, pkgs, lib, ... }: {
+# ==============================================================================
+# Configurações do Sistema Operacional (Rede, Bluetooth, Nix-LD, Portais XDG)
+# ==============================================================================
+{ pkgs, ... }: {
 
   # ==========================================
-  # CONFIGURAÇÕES GERAIS DO NIX
-  # ==========================================
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
-  nixpkgs.config.allowUnfree = true;
-
-  # ==========================================
-  # REDE (Apenas o serviço universal)
+  # GERENCIADOR DE REDE E RESOLUÇÃO DE DNS
   # ==========================================
   networking.networkmanager.enable = true;
+  # Servidores de DNS públicos resilientes para garantir conectividade na VM e no host
+  networking.nameservers = [ "1.1.1.1" "8.8.8.8" ];
 
   # ==========================================
   # BLUETOOTH
   # ==========================================
-  # Habilita os drivers e o serviço do Bluetooth
-  hardware.bluetooth.enable = true;
-
-  # Liga o Bluetooth automaticamente quando o PC iniciar
-  hardware.bluetooth.powerOnBoot = true;
-
-  # Habilita o Blueman (Gerenciador gráfico e Applet de bandeja)
-  services.blueman.enable = true;
-
-  # ==========================================
-  # IDIOMA, LOCALIZAÇÃO E TECLADO
-  # ==========================================
-  time.timeZone = "America/Sao_Paulo";
-  i18n.defaultLocale = "pt_BR.UTF-8";
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "pt_BR.UTF-8";
-    LC_IDENTIFICATION = "pt_BR.UTF-8";
-    LC_MEASUREMENT = "pt_BR.UTF-8";
-    LC_MONETARY = "pt_BR.UTF-8";
-    LC_NAME = "pt_BR.UTF-8";
-    LC_NUMERIC = "pt_BR.UTF-8";
-    LC_PAPER = "pt_BR.UTF-8";
-    LC_TELEPHONE = "pt_BR.UTF-8";
-    LC_TIME = "pt_BR.UTF-8";
-  };
-  console.keyMap = "br-abnt2";
-  services.xserver.xkb = {
-    layout = "br";
-    variant = "";
-  };
-
-  # ==========================================
-  # AMBIENTE GRÁFICO (KDE PLASMA & SDDM)
-  # ==========================================
-  services.xserver.enable = true;
-  services.displayManager.sddm.enable = true;
-  services.displayManager.sddm.wayland.enable = false;
-  services.desktopManager.plasma6.enable = true;
-
-  # ==========================================
-  # ÁUDIO E MULTIMÍDIA (PIPEWIRE)
-  # ==========================================
-  services.pulseaudio.enable = false;
-  security.rtkit.enable = true;
-  services.pipewire = {
+  hardware.bluetooth = {
     enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
+    powerOnBoot = true; # Inicializa o adaptador Bluetooth no boot
+  };
+  services.blueman.enable = true; # Daemon e applet gráfico do Bluetooth para a tray
+
+  # ==========================================
+  # BATERIA
+  # ==========================================
+  services.upower.enable = true;
+
+  # ==========================================
+  # REGRAS DO GERENCIADOR NIX E CACHES
+  # ==========================================
+  nix.settings = {
+    experimental-features = [ "nix-command" "flakes" ];
+    trusted-users = [ "root" "leonardo" "@wheel" ]; # Usuários com permissão para adicionar substitutores
+    
+    # Limites para evitar travamentos de CPU/RAM durante compilações locais
+    max-jobs = 1;
+    cores = 6;
+
+    # Repositórios oficiais de binários pré-compilados
+    substituters = [
+      "https://cache.nixos.org"
+      "https://xddxdd.cachix.org"
+      "https://niri.cachix.org"
+      "https://noctalia.cachix.org"
+    ];
+    trusted-public-keys = [
+      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+      "xddxdd.cachix.org-1:ay1HJyNDYmlSwj5NXQG065C8LfoqqKaTNCyzeixGjf8="
+      "niri.cachix.org-1:Wv0OmO7PsuocRKzfDoJ3mulSl7Z6oezYhGhR+3W2964="
+      "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
+    ];
   };
 
   # ==========================================
-  # SERVIÇOS DO SISTEMA (POLKIT, ZRAM, IMPRESSÃO)
+  # COMPATIBILIDADE COM PROJETOS LEGADOS (NIX-LD)
   # ==========================================
-  security.polkit.enable = true;
-  zramSwap.enable = true;
-  services.printing.enable = true;
-  programs.fish.enable = true;
-  services.flatpak.enable = true;
+  # Permite executar binários dinâmicos baixados via npm, pip, cargo ou VS Code
+  programs.nix-ld = {
+    enable = true;
+    libraries = with pkgs; [
+      stdenv.cc.cc
+      zlib
+      fuse3
+      icu
+      openssl
+      glib
+    ];
+  };
 
   # ==========================================
-  # VARIÁVEIS DE AMBIENTE GERAIS
+  # XDG DESKTOP PORTALS (Niri + KDE)
   # ==========================================
-  environment.sessionVariables = {
-    NIXOS_OZONE_WL = "1";
-    KWIN_FORCE_SOFTWARE_CURSORS = "1";
-    KWIN_DRM_NO_AMS = "1";
-    MESA_SHADER_CACHE_MAX_SIZE = "12G";
-    GSK_RENDERER = "gl";
+  # Permite seletores de arquivos, captura de tela e atalhos globais
+  xdg.portal = {
+    enable = true;
+    extraPortals = [
+      pkgs.kdePackages.xdg-desktop-portal-kde
+      pkgs.xdg-desktop-portal-gnome
+      pkgs.xdg-desktop-portal-gtk
+    ];
+    config.niri = {
+      default = [ "kde" "gnome" "gtk" ];
+      "org.freedesktop.impl.portal.Secret" = [ "gnome-keyring" ];
+    };
   };
+
+  # ==========================================
+  # APLICATIVOS DE INFRAESTRUTURA E KDE
+  # ==========================================
+  environment.systemPackages = with pkgs; [
+    kdePackages.dolphin                  # Gerenciador de arquivos
+    kdePackages.kate                     # Editor de texto
+    kdePackages.kio-extras               # Miniaturas e integração de rede no Dolphin
+    kdePackages.kdegraphics-thumbnailers # Gerador de pré-visualizações de imagem
+    kdePackages.kded                     # Daemon de plano de fundo do KDE
+    kdePackages.polkit-kde-agent-1       # Agente de autenticação gráfica para senhas de admin
+    direnv                               # Gerenciador de ambientes virtuais automáticos
+    devenv                               # Ferramenta para shells de desenvolvimento
+    blueman                              # Gerenciador gráfico de dispositivos Bluetooth
+  ];
+
+  # Ativa o suporte ao direnv no shell
+  programs.direnv.enable = true;
 }

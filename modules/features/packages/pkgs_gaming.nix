@@ -1,27 +1,28 @@
-{ pkgs, lib, ... }: {
-  # Forçamos o uso do Kernel Zen para sobrescrever o que está no conf_machine.nix
-  boot.kernelPackages = lib.mkForce pkgs.linuxPackages_zen;
+# ==============================================================================
+# Configuração de Jogos, Desempenho e Emuladores
+# ==============================================================================
+{ pkgs, ... }: {
 
-  # Agendador de processos moderno (Nativo do NixOS!)
+  # Ativa o escalonador eBPF (SCX) para priorizar tarefas de jogos
   services.scx.enable = true;
   services.scx.scheduler = "scx_rusty";
 
+  # Pacotes de jogos, utilitários e monitoramento
   environment.systemPackages = with pkgs; [
-    # Performance & Monitoramento
+    # Performance, HUD e Gravador
     mangohud
     gamemode
     nvtopPackages.nvidia
     gpu-screen-recorder
 
-    # Launchers & Emuladores
+    # Launchers e Emuladores
     heroic
-    #bottles <- adicionar flatpak depois
     dolphin-emu
     cemu
     gamescope
-
   ];
 
+  # Ativa os daemons de suporte a jogos no NixOS
   programs.gamemode.enable = true;
   programs.steam.enable = true;
   programs.gamescope.enable = true;

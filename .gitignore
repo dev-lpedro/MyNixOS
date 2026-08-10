@@ -28,3 +28,5 @@ secrets/
 *.pem
 *.key
 ./modules/features/niri/cfg_noctalia/plugins
+/modules/features/niri/cfg_noctalia/plugins
+result

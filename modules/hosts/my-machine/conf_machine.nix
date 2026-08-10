@@ -1,20 +1,36 @@
-{ config, pkgs, ... }: {
+# ==============================================================================
+# Configurações do Hardware (Acer Nitro V15 - ANV15-51)
+# Kernel CachyOS, GPU Híbrida NVIDIA Offload, Btrfs e suporte a VM.
+# ==============================================================================
+{ config, pkgs, lib, inputs, ... }: {
+
+  # Identificação do computador na rede
+  networking.hostName = "fakeNixOs";
+  system.stateVersion = "24.11";
+
+  # Permissão para pacotes e drivers proprietários (NVIDIA, Steam, etc.)
+  nixpkgs.config.allowUnfree = true;
 
   # ==========================================
-  # IDENTIDADE DESTA MÁQUINA
+  # SERVIÇOS DE INTEGRAÇÃO COM MÁQUINA VIRTUAL
   # ==========================================
-  networking.hostName = "fakenix"; # Nome deste PC
-  system.stateVersion = "23.11"; # Versão de quando este PC foi instalado
+  services.qemuGuest.enable = true;
+  services.spice-vdagentd.enable = true;
 
   # ==========================================
-  # BOOTLOADER E KERNEL (Otimizado para este hardware)
+  # BOOTLOADER E KERNEL
   # ==========================================
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.loader.grub.enable = false;
 
-  boot.initrd.kernelModules = [ "nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
-  boot.kernelModules = [ "tcp_bbr" ];
+  boot.kernelPackages = inputs.nix-cachyos-kernel.legacyPackages.${pkgs.system}.linuxPackages-cachyos-latest;
+
+  # Escalonador eBPF para o hardware real
+  services.scx.enable = true;
+  services.scx.scheduler = "scx_rusty";
+
+  # Parâmetros de desempenho e suporte DRM no Kernel
   boot.kernelParams = [
     "quiet"
     "splash"
@@ -23,16 +39,18 @@
     "nvidia-drm.modeset=1"
   ];
 
-  boot.kernel.sysctl = {
-    "kernel.split_lock_mitigate" = 0;
-    "kernel.nmi_watchdog" = 0;
-    "net.core.netdev_max_backlog" = 4096;
-    "fs.file-max" = 2097152;
-    "net.ipv4.tcp_congestion_control" = "bbr";
+  # Manutenção automática e verificação de erros no Btrfs
+  services.btrfs.autoScrub = {
+    enable = true;
+    interval = "monthly";
+    fileSystems = [ "/" ];
   };
 
+  # Alternância dinâmica de perfis energéticos da CPU via D-Bus
+  services.power-profiles-daemon.enable = true;
+
   # ==========================================
-  # DRIVERS E HARDWARE (NVIDIA RTX 2050 + INTEL)
+  # DRIVERS NVIDIA (Modo Híbrido/Offload)
   # ==========================================
   services.xserver.videoDrivers = [ "nvidia" ];
 
@@ -48,14 +66,45 @@
 
   hardware.nvidia = {
     modesetting.enable = true;
-    open = false;
+    open = false; # Módulo proprietário estável para arquitetura Ampere (RTX 2050)
     nvidiaSettings = true;
+    powerManagement.enable = true;
+    powerManagement.finegrained = true; # Desliga a GPU dedicada quando inativa
 
     prime = {
-      sync.enable = true;
-      # IDs exatos das placas de vídeo desta máquina
+      # Modo Offload: GPU dedicada é ativada apenas quando invocada (gamemoderun)
+      offload = {
+        enable = true;
+        enableOffloadCmd = true;
+      };
       intelBusId = "PCI:0:2:0";
       nvidiaBusId = "PCI:1:0:0";
     };
+  };
+
+  # ==========================================
+  # MODO DE TESTE EM MÁQUINA VIRTUAL (QEMU)
+  # ==========================================
+  virtualisation.vmVariant = {
+    virtualisation.memorySize = 4096;
+    virtualisation.cores = 4;
+
+    # Desativa o SCX eBPF apenas dentro da VM
+    services.scx.enable = lib.mkForce false;
+
+    # Compartilha a pasta do repositório hospedeiro diretamente com a VM
+    virtualisation.sharedDirectories.mynixos = {
+      source = "/home/leonardo/MyNixOs";
+      target = "/home/leonardo/MyNixOs";
+    };
+
+    # Configurações de vídeo e sessões para QEMU
+    services.xserver.videoDrivers = lib.mkForce [ "modesetting" ];
+    hardware.nvidia.modesetting.enable = lib.mkForce false;
+
+    services.xserver.enable = true;
+    services.desktopManager.plasma6.enable = true;
+    services.displayManager.sddm.enable = true;
+    services.displayManager.sddm.wayland.enable = true;
   };
 }

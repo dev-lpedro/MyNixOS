@@ -1,0 +1,15 @@
+// ────────────── Startup Applications ──────────────
+// https://github.com/YaLTeR/niri/wiki/Configuration:-Miscellaneousspawn-sh-at-startup
+
+spawn-sh-at-startup "noctalia-shell"
+spawn-at-startup "kded6"
+
+// Agente de clipboard do QEMU/SPICE para copiar e colar entre hospedeiro e VM
+spawn-at-startup "spice-vdagent"
+
+spawn-at-startup "/usr/lib/polkit-kde-authentication-agent-1"
+spawn-at-startup "wl-paste" "--type" "text" "--watch" "cliphist" "store"
+spawn-at-startup "wl-paste" "--type" "image" "--watch" "cliphist" "store"
+
+spawn-at-startup "dbus-update-activation-environment" "--systemd" "QT_QPA_PLATFORMTHEME=kde" "XDG_CURRENT_DESKTOP=Niri"
+spawn-at-startup "systemctl" "--user" "import-environment" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP"

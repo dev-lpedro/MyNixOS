@@ -1,10 +1,12 @@
+# ==============================================================================
+# Configuração do Flake-Parts
+# Define as plataformas de sistema suportadas para compilação.
+# ==============================================================================
 {
   config = {
+    # Define a arquitetura x86_64 Linux como alvo principal
     systems = [
       "x86_64-linux"
-      "x86_64-darwin"
-      "aarch64-linux"
-      "aarch64-darwin"
     ];
   };
 }
