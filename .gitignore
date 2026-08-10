@@ -1,0 +1,30 @@
+# ==========================================
+# RESULTADOS DE COMPILAÇÃO DO NIX
+# ==========================================
+result
+result-*
+.direnv/
+.envrc
+
+# ==========================================
+# DISCOS VIRTUAIS E MÁQUINAS VIRTUAIS (QEMU)
+# ==========================================
+*.qcow2
+*.qcow2.bak
+
+# ==========================================
+# ARQUIVOS TEMPORÁRIOS DE EDITORES E SISTEMA
+# ==========================================
+*~
+*.swp
+*.tmp
+*.bak
+.DS_Store
+
+# ==========================================
+# SEGREDOS E CHAVEIROS LOCAIS
+# ==========================================
+secrets/
+*.pem
+*.key
+./modules/features/niri/cfg_noctalia/plugins
