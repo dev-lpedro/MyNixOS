@@ -10,3 +10,6 @@ result-*
 
 # Se você gerar chaves ou senhas locais que não devem ir pro GitHub
 secrets/
+
+#vm
+*.qcow2
