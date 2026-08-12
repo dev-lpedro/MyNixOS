@@ -3,9 +3,9 @@
     gimp
     krita
     vlc
-    mpv
+    #mpv
     audacity
-    obs-studio
-    upscayl
+    #obs-studio
+    #upscayl
   ];
 }

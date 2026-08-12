@@ -28,6 +28,8 @@
     usbutils
 
     gparted
+
+    btrfs-assistant
   ];
 
   # Instalação declarativa de fontes do sistema

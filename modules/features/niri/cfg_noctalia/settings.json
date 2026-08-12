@@ -256,7 +256,7 @@
     },
     "colorSchemes": {
         "darkMode": true,
-        "generationMethod": "faithful",
+        "generationMethod": "dysfunctional",
         "manualSunrise": "06:30",
         "manualSunset": "18:30",
         "monitorForColors": "winit",
@@ -444,7 +444,7 @@
                 "Up"
             ]
         },
-        "language": "",
+        "language": "pt",
         "lockOnSuspend": true,
         "lockScreenAnimations": false,
         "lockScreenBlur": 0.9,
@@ -681,15 +681,7 @@
             },
             {
                 "enabled": true,
-                "id": "gtk"
-            },
-            {
-                "enabled": true,
                 "id": "alacritty"
-            },
-            {
-                "enabled": true,
-                "id": "btop"
             },
             {
                 "enabled": true,
@@ -714,6 +706,14 @@
             {
                 "enabled": true,
                 "id": "kcolorscheme"
+            },
+            {
+                "enabled": true,
+                "id": "gtk"
+            },
+            {
+                "enabled": true,
+                "id": "btop"
             }
         ],
         "enableUserTheming": false

@@ -36,7 +36,15 @@
 
         # Compilador CSS necessário para renderizar temas de widgets
         pkgs.dart-sass
+
+        # Dependência para geração dinâmica de cores baseada no papel de parede
+        pkgs.matugen
       ];
+      # Força o Equibop a rodar em Wayland nativo para liberar a transmissão de tela
+      xdg.configFile."equibop-flags.conf".text = ''
+      --ozone-platform=wayland
+      --enable-features=WaylandWindowDecorations
+    '';
     };
   };
 }

@@ -25,4 +25,50 @@
     # Define o Fish como o shell padrão do usuário
     shell = pkgs.fish;
   };
+  
+  # Configurações do perfil do usuário gerenciadas pelo Home Manager
+  home-manager.users.leonardo = {
+    # Cria as pastas padrão (~/Downloads, ~/Documentos, etc.)
+    xdg.userDirs = {
+      enable = true;
+      createDirectories = true;
+    };
+  
+
+    # Preferir tema escuro nos portais XDG e GTK4
+    dconf.settings = {
+      "org/gnome/desktop/interface" = {
+        color-scheme = "prefer-dark";
+        gtk-theme = "adw-gtk3-dark";
+      };
+    };
+
+    # Preferir tema escuro em apps GTK
+    gtk = {
+      enable = true;
+      theme = {
+        name = "adw-gtk3-dark"; # Tema base de fallback para quando o Noctalia não estiver ativo
+        package = pkgs.adw-gtk3;
+      };
+      gtk3 = {
+        extraConfig.gtk-application-prefer-dark-theme = 1;
+        extraCss = ''
+          @import url("file:///home/leonardo/.config/gtk-3.0/noctalia.css");
+        '';
+      };
+      gtk4 = {
+        extraConfig.gtk-application-prefer-dark-theme = 1;
+        extraCss = ''
+          @import url("file:///home/leonardo/.config/gtk-4.0/noctalia.css");
+        '';
+      };
+    };
+
+    #Preferir tema escuro em apps qt
+    qt = {
+      enable = true;
+      platformTheme.name = "kde";
+      style.name = "breeze";
+    };
+  };
 }

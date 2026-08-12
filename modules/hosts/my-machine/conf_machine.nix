@@ -12,6 +12,41 @@
   nixpkgs.config.allowUnfree = true;
 
   # ==========================================
+  # AMBIENTES DE TRABALHO E TELA DE LOGIN
+  # ==========================================
+  services.desktopManager.plasma6.enable = true; # KDE Plasma 6 instalado para fallback
+
+  services.displayManager = {
+    defaultSession = lib.mkForce "niri"; # Força o Niri como sessão padrão do SDDM
+    sddm = {
+      enable = true;
+      wayland = {
+        enable = true;
+        compositor = "kwin";
+      };
+      theme = "catppuccin-mocha-mauve";
+      settings = {
+        Theme = {
+          CursorTheme = "capitaine-cursors";
+          CursorSize = "24";
+        };
+      };
+    };
+  };
+
+  # Instala o tema Catppuccin, o cursor global e dependências do SDDM
+  environment.systemPackages = with pkgs; [
+    capitaine-cursors 
+    (catppuccin-sddm.override {
+      flavor = "mocha";
+      accent = "mauve";
+      font = "Noto Sans";
+    })
+    kdePackages.qt5compat
+    kdePackages.qtsvg
+  ];
+
+  # ==========================================
   # SERVIÇOS DE INTEGRAÇÃO COM MÁQUINA VIRTUAL
   # ==========================================
   services.qemuGuest.enable = true;
@@ -24,8 +59,9 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.grub.enable = false;
 
-  boot.kernelPackages = inputs.nix-cachyos-kernel.legacyPackages.${pkgs.system}.linuxPackages-cachyos-latest;
-
+  # boot.kernelPackages = inputs.nix-cachyos-kernel.legacyPackages.${pkgs.system}.linuxPackages-cachyos-latest;
+  boot.kernelPackages = pkgs.linuxPackages_zen;
+  
   # Escalonador eBPF para o hardware real
   services.scx.enable = true;
   services.scx.scheduler = "scx_rusty";
@@ -81,6 +117,33 @@
       nvidiaBusId = "PCI:1:0:0";
     };
   };
+
+  # ==========================================
+  # HIBERNAÇÃO AUTOMÁTICA
+  # ==========================================
+  boot.initrd.systemd.enable = true;
+  powerManagement.enable = true;
+
+  # ==========================================
+  # ZRAM (4 GB de Swap Comprimida na RAM)
+  # ==========================================
+  zramSwap = {
+    enable = true;
+    algorithm = "zstd";      # Algoritmo de compressão
+    memoryPercent = 50;      # 50% da RAM
+    priority = 100;          # Prioridade ALTA: usa a ZRAM em primeiro lugar
+  };
+
+  # ==========================================
+  # SWAPFILE DE DISCO (8 GB no Btrfs)
+  # ==========================================
+  swapDevices = [
+    {
+      device = "/var/lib/swapfile";
+      size = 8 * 1024;       # 8 GB (8192 MB)
+      priority = 10;         # Prioridade BAIXA: só é usado se os 4 GB de ZRAM lotarem
+    }
+  ];
 
   # ==========================================
   # MODO DE TESTE EM MÁQUINA VIRTUAL (QEMU)

@@ -33,6 +33,6 @@
   # Ativa o compositor Niri no nível do sistema NixOS
   programs.niri = {
     enable = true;
-    package = pkgs.niri-unstable; # Usa a versão mais recente com suporte a 'include'
+    package = pkgs.niri;
   };
 }

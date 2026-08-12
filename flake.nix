@@ -34,10 +34,12 @@
     };
 
     # Flake do Compositor Niri Wayland
+    /*
     niri = {
       url = "github:sodiboo/niri-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
+      #inputs.nixpkgs.follows = "nixpkgs";
     };
+    */
 
     # Kernel otimizado com LTO/BORE do CachyOS (Branch release para cache pré-compilado)
     nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";

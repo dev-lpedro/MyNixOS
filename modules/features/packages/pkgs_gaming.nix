@@ -10,15 +10,15 @@
   # Pacotes de jogos, utilitários e monitoramento
   environment.systemPackages = with pkgs; [
     # Performance, HUD e Gravador
-    mangohud
+    #mangohud
     gamemode
     nvtopPackages.nvidia
     gpu-screen-recorder
 
     # Launchers e Emuladores
     heroic
-    dolphin-emu
-    cemu
+    #dolphin-emu
+    #cemu
     gamescope
   ];
 

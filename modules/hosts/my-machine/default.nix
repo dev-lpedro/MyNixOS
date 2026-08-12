@@ -11,16 +11,18 @@
       # Define a plataforma no padrão moderno do NixOS (Remove o aviso do terminal)
       { nixpkgs.hostPlatform = "x86_64-linux"; }
 
+      /*
       # Overlay oficial do Niri para compilação upstream
       ({ inputs, ... }: {
         nixpkgs.overlays = [ inputs.niri.overlays.niri ];
       })
+      */
 
       # Módulo integrado do Home Manager
       inputs.home-manager.nixosModules.home-manager
 
       # Módulo oficial do Niri Compositor
-      inputs.niri.nixosModules.niri
+      #inputs.niri.nixosModules.niri
 
       # Arquivos de configuração gráfica e de hardware do sistema
       ./configuration.nix
