@@ -1,8 +1,7 @@
 # ==============================================================================
 # Configuração de Usuários do Sistema e Permissões de Grupos
 # ==============================================================================
-{ pkgs, ... }: {
-
+{pkgs, ...}: {
   # Habilita o shell Fish no nível do sistema operacional
   programs.fish.enable = true;
 
@@ -11,21 +10,21 @@
     isNormalUser = true;
     description = "Leonardo";
     initialPassword = "123"; #Senha temporaria, mude com passwd
-    
+
     # Grupos de permissões no hardware
     extraGroups = [
-      "wheel"          # Acesso ao sudo
+      "wheel" # Acesso ao sudo
       "networkmanager" # Permissão para gerenciar conexões Wi-Fi/Rede
-      "video"          # Controle da GPU e brilho da tela (brightnessctl)
-      "audio"          # Controle do servidor de áudio Pipewire e volume
-      "input"          # Acesso a touchpads, mouses e controles de jogos
-      "gamemode"       # Permissão para acionar otimizações em jogos
+      "video" # Controle da GPU e brilho da tela (brightnessctl)
+      "audio" # Controle do servidor de áudio Pipewire e volume
+      "input" # Acesso a touchpads, mouses e controles de jogos
+      "gamemode" # Permissão para acionar otimizações em jogos
     ];
-    
+
     # Define o Fish como o shell padrão do usuário
     shell = pkgs.fish;
   };
-  
+
   # Configurações do perfil do usuário gerenciadas pelo Home Manager
   home-manager.users.leonardo = {
     # Cria as pastas padrão (~/Downloads, ~/Documentos, etc.)
@@ -33,7 +32,6 @@
       enable = true;
       createDirectories = true;
     };
-  
 
     # Preferir tema escuro nos portais XDG e GTK4
     dconf.settings = {

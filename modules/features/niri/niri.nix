@@ -1,5 +1,9 @@
-{ pkgs, config, inputs, ... }: {
-
+{
+  pkgs,
+  config,
+  inputs,
+  ...
+}: {
   # ==========================================
   # CONFIGURAÇÕES DO COMPOSITOR NIRI VIA HOME MANAGER
   # ==========================================
@@ -7,9 +11,9 @@
     useGlobalPkgs = true;
     useUserPackages = true;
     backupFileExtension = "backup";
-    extraSpecialArgs = { inherit inputs; };
+    extraSpecialArgs = {inherit inputs;};
 
-    users.leonardo = { config, ... }: {
+    users.leonardo = {config, ...}: {
       home.stateVersion = "24.11";
 
       # Link simbólico dinâmico da pasta de configurações do Niri
@@ -21,10 +25,10 @@
       # Pacotes auxiliares essenciais para o Niri e Wayland
       home.packages = with pkgs; [
         xwayland-satellite # Suporte a janelas X11 no Niri
-        capitaine-cursors  # Tema de cursor
-        xwayland           # Servidor XWayland
-        wl-clipboard       # Suporte a Ctrl+C / Ctrl+V no Wayland
-        cliphist           # Histórico de área de transferência
+        capitaine-cursors # Tema de cursor
+        xwayland # Servidor XWayland
+        wl-clipboard # Suporte a Ctrl+C / Ctrl+V no Wayland
+        cliphist # Histórico de área de transferência
         # spice-vdagent      # Suporte a clipboard em VM (SPICE)
       ];
     };

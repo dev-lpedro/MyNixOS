@@ -2,8 +2,7 @@
 # ==============================================================================
 # Pacotes de Sistema e Utilitários
 # ==============================================================================
-{ pkgs, ... }: {
-
+{pkgs, ...}: {
   environment.systemPackages = with pkgs; [
     # Ferramentas Básicas de Terminal
     git
@@ -11,16 +10,16 @@
     curl
 
     # Laboratório do Niri e Noctalia
-    alacritty                 # Terminal leve
+    alacritty # Terminal leve
     kdePackages.polkit-kde-agent-1 # Janelinha de senha de administrador
 
     # Ferramentas do sistema para os widgets do Noctalia funcionarem
-    playerctl                 # Controlar músicas
-    pamixer                   # Controlar volume
-    brightnessctl             # Controlar brilho da tela
-    upower                    # Ler status da bateria
-    wl-clipboard              # Área de transferência (Ctrl+C / Ctrl+V) no Wayland
-    dart-sass                 # Renderizar cores em alguns temas do Quickshell
+    playerctl # Controlar músicas
+    pamixer # Controlar volume
+    brightnessctl # Controlar brilho da tela
+    upower # Ler status da bateria
+    wl-clipboard # Área de transferência (Ctrl+C / Ctrl+V) no Wayland
+    dart-sass # Renderizar cores em alguns temas do Quickshell
 
     cliphist
     unzip
@@ -30,9 +29,6 @@
     gparted
 
     btrfs-assistant
-
-    # Pacote de formatação de arquivos nix
-    alejandra
   ];
 
   # Instalação declarativa de fontes do sistema

@@ -2,8 +2,12 @@
 # Módulo Unificador do Sistema
 # Conecta as regras de hardware, pacotes globais e o ambiente de usuário.
 # ==============================================================================
-{ pkgs, lib, inputs, ... }: {
-
+{
+  pkgs,
+  lib,
+  inputs,
+  ...
+}: {
   imports = [
     # 1. Configurações físicas da máquina (CPU, GPU NVIDIA, Kernel CachyOS)
     ./conf_machine.nix
@@ -20,5 +24,4 @@
     ../../features/niri/niri.nix
     ../../features/niri/noctalia.nix
   ];
-
 }

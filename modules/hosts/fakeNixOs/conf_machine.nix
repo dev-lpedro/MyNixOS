@@ -2,8 +2,13 @@
 # Configurações do Hardware (Acer Nitro V15 - ANV15-51)
 # Kernel CachyOS, GPU Híbrida NVIDIA Offload, Btrfs e suporte a VM.
 # ==============================================================================
-{ config, pkgs, lib, inputs, ... }: {
-
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  ...
+}: {
   # Identificação do computador na rede
   networking.hostName = "fakeNixOs";
   system.stateVersion = "24.11";
@@ -36,7 +41,7 @@
 
   # Instala o tema Catppuccin, o cursor global e dependências do SDDM
   environment.systemPackages = with pkgs; [
-    capitaine-cursors 
+    capitaine-cursors
     (catppuccin-sddm.override {
       flavor = "mocha";
       accent = "mauve";
@@ -60,7 +65,7 @@
   boot.loader.grub.enable = false;
 
   boot.kernelPackages = pkgs.linuxPackages_zen; #kernel zen
-  
+
   # Escalonador eBPF para o hardware real
   #services.scx.enable = true;
   #services.scx.scheduler = "scx_rusty";
@@ -78,7 +83,7 @@
   services.btrfs.autoScrub = {
     enable = true;
     interval = "monthly";
-    fileSystems = [ "/" ];
+    fileSystems = ["/"];
   };
 
   # Alternância dinâmica de perfis energéticos da CPU via D-Bus
@@ -87,7 +92,7 @@
   # ==========================================
   # DRIVERS NVIDIA (Modo Híbrido/Offload)
   # ==========================================
-  services.xserver.videoDrivers = [ "nvidia" ];
+  services.xserver.videoDrivers = ["nvidia"];
 
   hardware.graphics = {
     enable = true;
@@ -128,9 +133,9 @@
   # ==========================================
   zramSwap = {
     enable = true;
-    algorithm = "zstd";      # Algoritmo de compressão
-    memoryPercent = 50;      # 50% da RAM
-    priority = 100;          # Prioridade ALTA: usa a ZRAM em primeiro lugar
+    algorithm = "zstd"; # Algoritmo de compressão
+    memoryPercent = 50; # 50% da RAM
+    priority = 100; # Prioridade ALTA: usa a ZRAM em primeiro lugar
   };
 
   # ==========================================
@@ -139,8 +144,8 @@
   swapDevices = [
     {
       device = "/var/lib/swapfile";
-      size = 8 * 1024;       # 8 GB (8192 MB)
-      priority = 10;         # Prioridade BAIXA: só é usado se os 4 GB de ZRAM lotarem
+      size = 8 * 1024; # 8 GB (8192 MB)
+      priority = 10; # Prioridade BAIXA: só é usado se os 4 GB de ZRAM lotarem
     }
   ];
 
@@ -161,7 +166,7 @@
     };
 
     # Configurações de vídeo e sessões para QEMU
-    services.xserver.videoDrivers = lib.mkForce [ "modesetting" ];
+    services.xserver.videoDrivers = lib.mkForce ["modesetting"];
     hardware.nvidia.modesetting.enable = lib.mkForce false;
 
     services.xserver.enable = true;

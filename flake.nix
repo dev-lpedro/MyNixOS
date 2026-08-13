@@ -23,10 +23,10 @@
   inputs = {
     # Canal principal de pacotes (NixOS Unstable)
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    
+
     # Framework para organizar flakes de forma modular
     flake-parts.url = "github:hercules-ci/flake-parts";
-    
+
     # Gerenciador declarativo de ambiente de usuário
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -58,10 +58,16 @@
   };
 
   # Ponto de saída da configuração
-  outputs = inputs@{ self, nixpkgs, flake-parts, nix-index-database, ... }:
-    flake-parts.lib.mkFlake { inherit inputs; } {
+  outputs = inputs @ {
+    self,
+    nixpkgs,
+    flake-parts,
+    nix-index-database,
+    ...
+  }:
+    flake-parts.lib.mkFlake {inherit inputs;} {
       # Arquitetura suportada
-      systems = [ "x86_64-linux" ];
+      systems = ["x86_64-linux"];
 
       # Módulos internos do repositório
       imports = [

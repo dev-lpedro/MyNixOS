@@ -1,8 +1,7 @@
 # ==============================================================================
 # Configuração de Jogos, Desempenho e Emuladores
 # ==============================================================================
-{ pkgs, ... }: {
-
+{pkgs, ...}: {
   # Pacotes de jogos, utilitários e monitoramento
   environment.systemPackages = with pkgs; [
     # Performance, HUD e Gravador
@@ -28,7 +27,7 @@
   programs.steam = {
     enable = true;
     gamescopeSession.enable = true;
-    
+
     # Injeta a versão mais recente do GE-Proton na Steam
     extraCompatPackages = with pkgs; [
       proton-ge-bin

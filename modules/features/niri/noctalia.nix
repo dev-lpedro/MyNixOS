@@ -1,5 +1,9 @@
-{ pkgs, config, inputs, ... }: {
-
+{
+  pkgs,
+  config,
+  inputs,
+  ...
+}: {
   # ==========================================
   # CONFIGURAÇÕES DA NOCTALIA SHELL VIA HOME MANAGER
   # ==========================================
@@ -7,9 +11,9 @@
     useGlobalPkgs = true;
     useUserPackages = true;
     backupFileExtension = "backup";
-    extraSpecialArgs = { inherit inputs; };
+    extraSpecialArgs = {inherit inputs;};
 
-    users.leonardo = { config, ... }: {
+    users.leonardo = {config, ...}: {
       home.stateVersion = "24.11";
 
       # Link simbólico dinâmico da pasta de configurações e temas da Noctalia
@@ -42,9 +46,9 @@
       ];
       # Força o Equibop a rodar em Wayland nativo para liberar a transmissão de tela
       xdg.configFile."equibop-flags.conf".text = ''
-      --ozone-platform=wayland
-      --enable-features=WaylandWindowDecorations
-    '';
+        --ozone-platform=wayland
+        --enable-features=WaylandWindowDecorations
+      '';
     };
   };
 }

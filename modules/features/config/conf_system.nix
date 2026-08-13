@@ -1,9 +1,13 @@
 # ==============================================================================
 # Configurações do Sistema Operacional (Rede, Bluetooth, Nix-LD, Portais XDG)
 # ==============================================================================
-{ pkgs, inputs, lib, ... }: {
-
-  nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ]; # Define o caminho do repositório NixOS
+{
+  pkgs,
+  inputs,
+  lib,
+  ...
+}: {
+  nix.nixPath = ["nixpkgs=${inputs.nixpkgs}"]; # Define o caminho do repositório NixOS
 
   # ==========================================
   # VARIÁVEIS DE AMBIENTE E INTEGRAÇÃO DO NH (Nix Helper)
@@ -69,8 +73,8 @@
   # ==========================================
   networking.networkmanager.enable = true;
   # Servidores de DNS públicos resilientes para garantir conectividade na VM e no host
-  networking.nameservers = [ "1.1.1.1" "8.8.8.8" ];
-  
+  networking.nameservers = ["1.1.1.1" "8.8.8.8"];
+
   # ==========================================
   # MODO ESCURO GLOBAL DO SISTEMA
   # ==========================================
@@ -112,9 +116,9 @@
   # REGRAS DO GERENCIADOR NIX E CACHES
   # ==========================================
   nix.settings = {
-    experimental-features = [ "nix-command" "flakes" ];
-    trusted-users = [ "root" "leonardo" "@wheel" ]; # Usuários com permissão para adicionar substitutores
-    
+    experimental-features = ["nix-command" "flakes"];
+    trusted-users = ["root" "leonardo" "@wheel"]; # Usuários com permissão para adicionar substitutores
+
     # Limites para evitar travamentos de CPU/RAM durante compilações locais
     max-jobs = 1;
     cores = 6;
@@ -162,10 +166,10 @@
       pkgs.xdg-desktop-portal-gtk
     ];
     config.niri = {
-      default = lib.mkForce [ "gnome" "gtk" "kde" ];
-      "org.freedesktop.impl.portal.Secret" = [ "gnome-keyring" ];
-      "org.freedesktop.impl.portal.ScreenCast" = [ "gnome" ];
-      "org.freedesktop.impl.portal.Screenshot" = [ "gnome" ];
+      default = lib.mkForce ["gnome" "gtk" "kde"];
+      "org.freedesktop.impl.portal.Secret" = ["gnome-keyring"];
+      "org.freedesktop.impl.portal.ScreenCast" = ["gnome"];
+      "org.freedesktop.impl.portal.Screenshot" = ["gnome"];
     };
   };
 
@@ -194,7 +198,7 @@
     owner = "root";
     group = "root";
     capabilities = "cap_perfmon+ep"; # Concede leitura do sysfs da Intel sem precisar de sudo
-    source = "${pkgs.btop.override { cudaSupport = true; }}/bin/btop";
+    source = "${pkgs.btop.override {cudaSupport = true;}}/bin/btop";
   };
 
   # ==========================================
@@ -210,19 +214,19 @@
   # ==========================================
   services.snapper = {
     snapshotInterval = "hourly"; # Frequência dos snapshots
-    cleanupInterval = "1d";     # Frequência da limpeza de snapshots antigos
-    
+    cleanupInterval = "1d"; # Frequência da limpeza de snapshots antigos
+
     configs = {
       home = {
         SUBVOLUME = "/home";
-        ALLOW_USERS = [ "leonardo" ];
+        ALLOW_USERS = ["leonardo"];
         TIMELINE_CREATE = true;
         TIMELINE_CLEANUP = true;
-        
+
         # Quantidade de snapshots retidos
-        TIMELINE_LIMIT_HOURLY = "12";  # Mantém as últimas 12 horas
-        TIMELINE_LIMIT_DAILY = "7";    # Mantém os últimos 7 dias
-        TIMELINE_LIMIT_WEEKLY = "4";   # Mantém as últimas 4 semanas
+        TIMELINE_LIMIT_HOURLY = "12"; # Mantém as últimas 12 horas
+        TIMELINE_LIMIT_DAILY = "7"; # Mantém os últimos 7 dias
+        TIMELINE_LIMIT_WEEKLY = "4"; # Mantém as últimas 4 semanas
         TIMELINE_LIMIT_MONTHLY = "12"; # Mantém os últimos 12 meses
       };
     };
@@ -232,21 +236,24 @@
   # APLICATIVOS DE INFRAESTRUTURA E KDE
   # ==========================================
   environment.systemPackages = with pkgs; [
-    nh                                   # Nix Helper
-    kdePackages.dolphin                  # Gerenciador de arquivos
-    kdePackages.kate                     # Editor de texto
-    kdePackages.kio-extras               # Miniaturas e integração de rede no Dolphin
+    nh # Nix Helper
+    kdePackages.dolphin # Gerenciador de arquivos
+    kdePackages.kate # Editor de texto
+    kdePackages.kio-extras # Miniaturas e integração de rede no Dolphin
     kdePackages.kdegraphics-thumbnailers # Gerador de pré-visualizações de imagem
-    kdePackages.kded                     # Daemon de plano de fundo do KDE
-    kdePackages.polkit-kde-agent-1       # Agente de autenticação gráfica para senhas de admin
-    direnv                               # Gerenciador de ambientes virtuais automáticos
-    devenv                               # Ferramenta para shells de desenvolvimento
-    blueman                              # Gerenciador gráfico de dispositivos Bluetooth
-    distrobox                            # Executa distros em contêineres isolados
-    podman                               # Motor de contêineres para o Distrobox
-    (btop.override { cudaSupport = true; })
+    kdePackages.kded # Daemon de plano de fundo do KDE
+    kdePackages.polkit-kde-agent-1 # Agente de autenticação gráfica para senhas de admin
+    direnv # Gerenciador de ambientes virtuais automáticos
+    devenv # Ferramenta para shells de desenvolvimento
+    blueman # Gerenciador gráfico de dispositivos Bluetooth
+    distrobox # Executa distros em contêineres isolados
+    podman # Motor de contêineres para o Distrobox
+    (btop.override {cudaSupport = true;})
     mesa-demos
     pavucontrol
+
+    nixd # Servidor de Linguagem Nix
+    alejandra # Formatador oficial de código .nix
   ];
 
   # Ativa o suporte ao direnv no shell
