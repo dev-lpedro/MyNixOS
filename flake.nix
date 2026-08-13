@@ -55,6 +55,12 @@
     noctalia-v4 = {
       url = "github:noctalia-dev/noctalia/legacy-v4";
     };
+
+    # Módulo de particionamento e formatação declarativa
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   # Ponto de saída da configuração

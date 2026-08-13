@@ -31,6 +31,10 @@
       # Módulo oficial do Niri Compositor
       #inputs.niri.nixosModules.niri
 
+      # Módulo e arquivo de configuração do Disko
+      inputs.disko.nixosModules.disko
+      ./disko.nix
+
       # Arquivos de configuração gráfica e de hardware do sistema
       ./configuration.nix
       ./hardware.nix
