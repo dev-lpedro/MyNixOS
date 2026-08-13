@@ -1,7 +1,9 @@
 # ==============================================================================
 # Configurações do Sistema Operacional (Rede, Bluetooth, Nix-LD, Portais XDG)
 # ==============================================================================
-{ pkgs, lib, ... }: {
+{ pkgs, inputs, lib, ... }: {
+
+  nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ]; # Define o caminho do repositório NixOS
 
   # ==========================================
   # VARIÁVEIS DE AMBIENTE E INTEGRAÇÃO DO NH (Nix Helper)
