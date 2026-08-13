@@ -17,6 +17,9 @@
     enableFishIntegration = true; # Integra o índice ao Shell Fish
   };
 
+  # Ativa o wrapper oficial do comma que usa o banco de dados semanal do Flake
+  programs.nix-index-database.comma.enable = true;
+
   # ==========================================
   # FUSO HORÁRIO E SINCRONIZAÇÃO DE TEMPO
   # ==========================================
@@ -228,7 +231,6 @@
   # ==========================================
   environment.systemPackages = with pkgs; [
     nh                                   # Nix Helper
-    comma                                # Executa qualquer programa via ', <comando>'
     kdePackages.dolphin                  # Gerenciador de arquivos
     kdePackages.kate                     # Editor de texto
     kdePackages.kio-extras               # Miniaturas e integração de rede no Dolphin

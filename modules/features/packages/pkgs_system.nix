@@ -30,6 +30,9 @@
     gparted
 
     btrfs-assistant
+
+    # Pacote de formatação de arquivos nix
+    alejandra
   ];
 
   # Instalação declarativa de fontes do sistema
