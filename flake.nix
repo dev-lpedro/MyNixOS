@@ -41,6 +41,11 @@
     };
     */
 
+    nix-index-database = {
+      url = "github:nix-community/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Noctalia v5 (Branch 'cachix' para testes)
     noctalia = {
       url = "github:noctalia-dev/noctalia/cachix";
@@ -53,7 +58,7 @@
   };
 
   # Ponto de saída da configuração
-  outputs = inputs@{ self, nixpkgs, flake-parts, ... }:
+  outputs = inputs@{ self, nixpkgs, flake-parts, nix-index-database, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       # Arquitetura suportada
       systems = [ "x86_64-linux" ];

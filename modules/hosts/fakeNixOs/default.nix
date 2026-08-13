@@ -21,6 +21,9 @@
       # Módulo integrado do Home Manager
       inputs.home-manager.nixosModules.home-manager
 
+      # Módulo do banco de dados  do nix-index
+      inputs.nix-index-database.nixosModules.default
+
       # Módulo oficial do Niri Compositor
       #inputs.niri.nixosModules.niri
 
