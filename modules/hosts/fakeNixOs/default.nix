@@ -1,9 +1,9 @@
 # ==============================================================================
-# Ponto de Entrada da Configuração do Host 'myMachine'
+# Ponto de Entrada da Configuração do Host 'fakeNixOs'
 # Instancia a arquitetura, ativa overlays do Niri e conecta o Home Manager.
 # ==============================================================================
 { self, inputs, ... }: {
-  flake.nixosConfigurations.myMachine = inputs.nixpkgs.lib.nixosSystem {
+  flake.nixosConfigurations.fakeNixOs = inputs.nixpkgs.lib.nixosSystem {
     # Disponibiliza as variáveis do Flake (inputs) para os submódulos
     specialArgs = { inherit self inputs; };
 

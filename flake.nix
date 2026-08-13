@@ -41,9 +41,6 @@
     };
     */
 
-    # Kernel otimizado com LTO/BORE do CachyOS (Branch release para cache pré-compilado)
-    nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
-
     # Noctalia v5 (Branch 'cachix' para testes)
     noctalia = {
       url = "github:noctalia-dev/noctalia/cachix";
@@ -64,7 +61,7 @@
       # Módulos internos do repositório
       imports = [
         ./modules/parts.nix
-        ./modules/hosts/my-machine/default.nix
+        ./modules/hosts/fakeNixOs/default.nix
       ];
     };
 }

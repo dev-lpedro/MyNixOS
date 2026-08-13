@@ -4,6 +4,20 @@
 { pkgs, lib, ... }: {
 
   # ==========================================
+  # VARIÁVEIS DE AMBIENTE E INTEGRAÇÃO DO NH (Nix Helper)
+  # ==========================================
+  # Aponta a pasta do repositório para o comando 'nh'
+  environment.sessionVariables.FLAKE = "/home/leonardo/MyNixOs";
+
+  # ==========================================
+  # NIX-INDEX (Banco de Dados de Pacotes)
+  # ==========================================
+  programs.nix-index = {
+    enable = true;
+    enableFishIntegration = true; # Integra o índice ao Shell Fish
+  };
+
+  # ==========================================
   # FUSO HORÁRIO E SINCRONIZAÇÃO DE TEMPO
   # ==========================================
   time.timeZone = "America/Sao_Paulo";
@@ -213,6 +227,8 @@
   # APLICATIVOS DE INFRAESTRUTURA E KDE
   # ==========================================
   environment.systemPackages = with pkgs; [
+    nh                                   # Nix Helper
+    comma                                # Executa qualquer programa via ', <comando>'
     kdePackages.dolphin                  # Gerenciador de arquivos
     kdePackages.kate                     # Editor de texto
     kdePackages.kio-extras               # Miniaturas e integração de rede no Dolphin

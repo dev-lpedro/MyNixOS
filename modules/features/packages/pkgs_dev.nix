@@ -5,6 +5,6 @@
     #dbeaver-bin
     #mysql-workbench
     #pgmodeler
-    github-desktop
+    #github-desktop
   ];
 }

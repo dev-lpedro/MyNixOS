@@ -59,12 +59,11 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.grub.enable = false;
 
-  # boot.kernelPackages = inputs.nix-cachyos-kernel.legacyPackages.${pkgs.system}.linuxPackages-cachyos-latest;
-  boot.kernelPackages = pkgs.linuxPackages_zen;
+  boot.kernelPackages = pkgs.linuxPackages_zen; #kernel zen
   
   # Escalonador eBPF para o hardware real
-  services.scx.enable = true;
-  services.scx.scheduler = "scx_rusty";
+  #services.scx.enable = true;
+  #services.scx.scheduler = "scx_rusty";
 
   # Parâmetros de desempenho e suporte DRM no Kernel
   boot.kernelParams = [
