@@ -256,7 +256,7 @@
     },
     "colorSchemes": {
         "darkMode": true,
-        "generationMethod": "dysfunctional",
+        "generationMethod": "faithful",
         "manualSunrise": "06:30",
         "manualSunset": "18:30",
         "monitorForColors": "winit",
@@ -512,9 +512,9 @@
     "network": {
         "bluetoothAutoConnect": true,
         "bluetoothDetailsViewMode": "list",
-        "bluetoothHideUnnamedDevices": true,
+        "bluetoothHideUnnamedDevices": false,
         "bluetoothRssiPollIntervalMs": 60000,
-        "bluetoothRssiPollingEnabled": false,
+        "bluetoothRssiPollingEnabled": true,
         "disableDiscoverability": false,
         "networkPanelView": "wifi",
         "wifiDetailsViewMode": "list"

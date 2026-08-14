@@ -13,7 +13,7 @@
   # VARIÁVEIS DE AMBIENTE E INTEGRAÇÃO DO NH (Nix Helper)
   # ==========================================
   # Aponta a pasta do repositório para o comando 'nh'
-  environment.sessionVariables.FLAKE = "/home/leonardo/MyNixOs";
+  environment.sessionVariables.NH_FLAKE = "/home/leonardo/MyNixOs";
 
   # ==========================================
   # NIX-INDEX (Banco de Dados de Pacotes)
@@ -190,6 +190,7 @@
     enable = true;
     dockerCompat = true; # Cria suporte a comandos docker
   };
+  virtualisation.containers.registries.search = [ "docker.io" ];
 
   # ==========================================
   # PERMISSÕES DO BTOP PARA EXIBIR IGPU INTEL + DGPU NVIDIA

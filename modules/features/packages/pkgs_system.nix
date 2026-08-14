@@ -37,5 +37,7 @@
     cantarell-fonts
     roboto
     material-symbols
+    nerd-fonts.jetbrains-mono
+    nerd-fonts.fira-code
   ];
 }

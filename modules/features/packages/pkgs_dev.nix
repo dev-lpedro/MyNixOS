@@ -6,5 +6,7 @@
     #mysql-workbench
     #pgmodeler
     #github-desktop
+
+    nodejs                    # Ambiente de execução JavaScript/npm
   ];
 }
