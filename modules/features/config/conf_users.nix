@@ -26,7 +26,7 @@
   };
 
   # Configurações do perfil do usuário gerenciadas pelo Home Manager
-  home-manager.users.leonardo = {
+  home-manager.users.leonardo = { config, pkgs, ...}:{
     # Cria as pastas padrão (~/Downloads, ~/Documentos, etc.)
     xdg.userDirs = {
       enable = true;
@@ -44,6 +44,7 @@
     # Preferir tema escuro em apps GTK
     gtk = {
       enable = true;
+      gtk2.configLocation = "${config.xdg.configHome}/gtk-2.0/gtkrc";
       theme = {
         name = "adw-gtk3-dark"; # Tema base de fallback para quando o Noctalia não estiver ativo
         package = pkgs.adw-gtk3;

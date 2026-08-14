@@ -15,5 +15,7 @@
     # ==========================================
     fastfetch
     # Adicione novos apps aqui antes de categorizá-los
+
+    starship
   ];
 }

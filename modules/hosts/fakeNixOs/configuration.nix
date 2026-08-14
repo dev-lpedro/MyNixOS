@@ -23,5 +23,9 @@
     # 4. Interface gráfica Niri + Noctalia Shell + Home Manager
     ../../features/niri/niri.nix
     ../../features/niri/noctalia.nix
+
+    #5. Alacritty + fish
+    ../../features/terminal/alacritty.nix
+    ../../features/terminal/fish.nix
   ];
 }

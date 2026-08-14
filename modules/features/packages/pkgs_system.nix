@@ -37,7 +37,16 @@
     cantarell-fonts
     roboto
     material-symbols
+    
+    
+    noto-fonts-color-emoji     # Emojis coloridos 
+    nerd-fonts.symbols-only    # Fallback universal para ícones Nerd Fonts
+    
+    # Fontes Monospaçadas com Ícones Integrados para Código/Terminal
     nerd-fonts.jetbrains-mono
     nerd-fonts.fira-code
+
+    # Fallback de texto global
+    noto-fonts
   ];
 }
