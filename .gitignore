@@ -34,3 +34,14 @@ secrets/
 ./modules/features/niri/cfg_noctalia/plugins
 /modules/features/niri/cfg_noctalia/plugins
 result
+
+# Devenv
+.devenv*
+devenv.local.nix
+devenv.local.yaml
+
+# direnv
+.direnv
+
+# pre-commit
+.pre-commit-config.yaml
