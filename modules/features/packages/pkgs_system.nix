@@ -6,11 +6,13 @@
   environment.systemPackages = with pkgs; [
     # Ferramentas Básicas de Terminal
     git
+    git-lfs
     wget
     curl
 
     # Laboratório do Niri e Noctalia
     alacritty # Terminal leve
+    kitty
     kdePackages.polkit-kde-agent-1 # Janelinha de senha de administrador
 
     # Ferramentas do sistema para os widgets do Noctalia funcionarem
