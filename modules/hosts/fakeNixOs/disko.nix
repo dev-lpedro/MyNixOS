@@ -7,7 +7,7 @@
       main = {
         type = "disk";
         # Nome padrão do dispositivo (pode ser sobrescrito via CLI se for um HD externo/SATA)
-        device = "/dev/nvme0n1"; 
+        device = "/dev/sda";
         content = {
           type = "gpt";
           partitions = {
@@ -21,7 +21,7 @@
                 type = "filesystem";
                 format = "vfat";
                 mountpoint = "/boot";
-                mountOptions = [ "fmask=0077" "dmask=0077" ];
+                mountOptions = ["fmask=0077" "dmask=0077"];
               };
             };
             # 2. Partição Principal Btrfs (Restante do espaço)
@@ -29,24 +29,24 @@
               size = "100%";
               content = {
                 type = "btrfs";
-                extraArgs = [ "-f" ]; # Força a formatação
+                extraArgs = ["-f"]; # Força a formatação
                 # Estrutura de subvolumes Btrfs com compressão ZSTD
                 subvolumes = {
                   "@" = {
                     mountpoint = "/";
-                    mountOptions = [ "compress=zstd:1" "noatime" ];
+                    mountOptions = ["compress=zstd:1" "noatime"];
                   };
                   "@home" = {
                     mountpoint = "/home";
-                    mountOptions = [ "compress=zstd:1" "noatime" ];
+                    mountOptions = ["compress=zstd:1" "noatime"];
                   };
                   "@nix" = {
                     mountpoint = "/nix";
-                    mountOptions = [ "compress=zstd:1" "noatime" ];
+                    mountOptions = ["compress=zstd:1" "noatime"];
                   };
                   "@log" = {
                     mountpoint = "/var/log";
-                    mountOptions = [ "compress=zstd:1" "noatime" ];
+                    mountOptions = ["compress=zstd:1" "noatime"];
                   };
                 };
               };

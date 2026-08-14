@@ -11,7 +11,7 @@
     curl
 
     # Laboratório do Niri e Noctalia
-    alacritty # Terminal leve
+    #alacritty # Terminal leve
     kitty
     kdePackages.polkit-kde-agent-1 # Janelinha de senha de administrador
 
@@ -39,11 +39,10 @@
     cantarell-fonts
     roboto
     material-symbols
-    
-    
-    noto-fonts-color-emoji     # Emojis coloridos 
-    nerd-fonts.symbols-only    # Fallback universal para ícones Nerd Fonts
-    
+
+    noto-fonts-color-emoji # Emojis coloridos
+    nerd-fonts.symbols-only # Fallback universal para ícones Nerd Fonts
+
     # Fontes Monospaçadas com Ícones Integrados para Código/Terminal
     nerd-fonts.jetbrains-mono
     nerd-fonts.fira-code

@@ -7,6 +7,8 @@
     #pgmodeler
     #github-desktop
 
-    nodejs                    # Ambiente de execução JavaScript/npm
+    nodejs # Ambiente de execução JavaScript/npm
+
+    gh
   ];
 }

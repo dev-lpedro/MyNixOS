@@ -256,7 +256,7 @@
     },
     "colorSchemes": {
         "darkMode": true,
-        "generationMethod": "faithful",
+        "generationMethod": "vibrant",
         "manualSunrise": "06:30",
         "manualSunset": "18:30",
         "monitorForColors": "winit",
@@ -714,6 +714,10 @@
             {
                 "enabled": true,
                 "id": "code"
+            },
+            {
+                "enabled": true,
+                "id": "kitty"
             }
         ],
         "enableUserTheming": false

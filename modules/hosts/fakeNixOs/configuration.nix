@@ -25,7 +25,12 @@
     ../../features/niri/noctalia.nix
 
     #5. Alacritty + fish
-    ../../features/terminal/alacritty.nix
+    #../../features/terminal/alacritty.nix
+    ../../features/terminal/kitty.nix
     ../../features/terminal/fish.nix
+    ../../features/terminal/starship.nix
+
+    #6. Vscode
+    ../../features/editor/vscode.nix
   ];
 }

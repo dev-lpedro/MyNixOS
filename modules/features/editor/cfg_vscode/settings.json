@@ -1,0 +1,34 @@
+{
+    "files.autoSave": "afterDelay",
+    "editor.wordWrap": "bounded",
+    
+    // Desativa sugestões automáticas inline do Copilot
+    "editor.inlineSuggest.enabled": false,
+    "github.copilot.editor.enableAutoCompletions": false,
+
+    // Tema do Noctalia Shell e fonte do terminal com ícones Nerd Fonts
+    //"workbench.colorTheme": "NoctaliaTheme",
+    "terminal.integrated.fontFamily": "'JetBrainsMono Nerd Font', 'Symbols Nerd Font', monospace",
+
+    // Configurações do Servidor de Linguagem Nix (nixd + alejandra)
+    "nix.enableLanguageServer": true,
+    "nix.serverPath": "nixd",
+    "nix.serverSettings": {
+        "nixd": {
+            "nixpkgs": {
+                "expr": "import <nixpkgs> { }"
+            },
+            "formatting": {
+                "command": [ "alejandra" ]
+            },
+            "options": {
+                "nixos": {
+                    "expr": "(builtins.getFlake \"/home/leonardo/MyNixOs\").nixosConfigurations.fakeNixOs.options"
+                },
+                "home-manager": {
+                    "expr": "(builtins.getFlake \"/home/leonardo/MyNixOs\").nixosConfigurations.fakeNixOs.options.home-manager.users.type.getSubOptions []"
+                }
+            }
+        }
+    }
+}

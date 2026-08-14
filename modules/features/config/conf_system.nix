@@ -190,7 +190,7 @@
     enable = true;
     dockerCompat = true; # Cria suporte a comandos docker
   };
-  virtualisation.containers.registries.search = [ "docker.io" ];
+  virtualisation.containers.registries.search = ["docker.io"];
 
   # ==========================================
   # PERMISSÕES DO BTOP PARA EXIBIR IGPU INTEL + DGPU NVIDIA

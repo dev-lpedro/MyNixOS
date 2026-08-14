@@ -26,7 +26,11 @@
   };
 
   # Configurações do perfil do usuário gerenciadas pelo Home Manager
-  home-manager.users.leonardo = { config, pkgs, ...}:{
+  home-manager.users.leonardo = {
+    config,
+    pkgs,
+    ...
+  }: {
     # Cria as pastas padrão (~/Downloads, ~/Documentos, etc.)
     xdg.userDirs = {
       enable = true;

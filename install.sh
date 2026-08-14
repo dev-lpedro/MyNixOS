@@ -93,6 +93,60 @@ if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
     exit 0
 fi
 
+# Em muitos ambientes (ISOs "puras", nix-shell manual, Nix instalado sem os
+# flags de flakes) os recursos experimentais "nix-command" e "flakes" vêm
+# desativados por padrão. Isso derruba qualquer "nix run"/"nix build"/
+# "nix path-info" com o erro:
+#   "error: experimental Nix feature 'nix-command' is disabled..."
+# Em vez de colocar "--extra-experimental-features" em cada chamada
+# individual (nix build, nix run, nix path-info, nixos-install...), exporto
+# via NIX_CONFIG uma única vez — todo comando "nix"/"nixos-install" chamado
+# a partir daqui (inclusive por sub-processos) respeita essa configuração.
+export NIX_CONFIG="experimental-features = nix-command flakes"
+
+# Quando o script roda via "sudo" a partir de um sistema NixOS já
+# instalado (em vez do live-ISO), o sudo costuma aplicar um "secure_path"
+# reduzido que NÃO inclui /run/current-system/sw/bin — é lá que moram
+# nixos-generate-config, nixos-install e outras ferramentas do sistema.
+# Isso causa "comando não encontrado" mesmo com tudo instalado. Corrige
+# adicionando esse diretório na frente do PATH atual.
+if [[ -d /run/current-system/sw/bin ]]; then
+    export PATH="/run/current-system/sw/bin:$PATH"
+fi
+
+# ------------------------------------------------------------------------------
+# EXECUÇÃO DE FERRAMENTAS DO NIXOS (nixos-generate-config, nixos-install...)
+# ------------------------------------------------------------------------------
+# Essas ferramentas só existem "de fábrica" em um sistema NixOS (ex.: o
+# live-ISO oficial), onde já são cobertas pelo ajuste de PATH acima. Rodando
+# a partir de outra distro (ex.: CachyOS) elas simplesmente não existem no
+# sistema — e não fazem parte do pacote "nix" (gerenciador), então instalar
+# o Nix sozinho não resolve.
+#
+# run_nixos_tool() cobre os dois casos: se o binário já existe no PATH (live
+# ISO / NixOS instalado), usa ele diretamente; caso contrário, busca a
+# ferramenta sob demanda via nixpkgs (pacote "nixos-install-tools", que
+# empacota nixos-generate-config, nixos-install, nixos-enter e afins),
+# executando via "nix shell" sem instalar nada permanentemente no sistema —
+# só fica em cache no /nix/store, coletável com "nix-collect-garbage".
+run_nixos_tool() {
+    local bin_name="$1"
+    shift
+    if command -v "$bin_name" &>/dev/null; then
+        "$bin_name" "$@"
+    else
+        echo -e "${YELLOW}'$bin_name' não encontrado nativamente neste sistema — buscando via nixpkgs (nixos-install-tools)...${NC}"
+        # "nix run nixpkgs#nixos-install-tools" NÃO funciona aqui: nix run
+        # espera um "app" cujo nome bate com o atributo do pacote, mas
+        # "nixos-install-tools" é só um pacote-caixa que agrupa vários
+        # binários (nixos-generate-config, nixos-install, nixos-enter...)
+        # sem nenhum se chamar igual ao pacote. "nix shell ... -c" resolve:
+        # ele só disponibiliza o pacote num PATH temporário e eu escolho
+        # explicitamente qual binário chamar dentro dele.
+        nix shell "nixpkgs#nixos-install-tools" -c "$bin_name" "$@"
+    fi
+}
+
 # ==============================================================================
 # TRAP DE SEGURANÇA — tenta desmontar /mnt se algo der errado no meio do caminho
 # ==============================================================================
@@ -163,6 +217,19 @@ resolve_chafa() {
 }
 resolve_chafa
 
+# Se as imagens do repositório estão versionadas via Git LFS e o ponteiro
+# não foi "resolvido" (ex.: sem git-lfs instalado ou sem rede no ambiente
+# live), o arquivo .svg no disco é só um texto pequeno tipo:
+#   version https://git-lfs.github.com/spec/v1
+#   oid sha256:...
+# Isso não é um SVG válido — detecta esse caso e trata como "sem logo",
+# em vez de tentar (e falhar silenciosamente) renderizar lixo com o chafa.
+is_lfs_pointer() {
+    local f="$1"
+    [[ -f "$f" ]] || return 1
+    head -c 200 "$f" 2>/dev/null | grep -q "git-lfs.github.com/spec"
+}
+
 detect_graphics_format() {
     local t="${TERM_PROGRAM:-}${TERM:-}"
     case "$t" in
@@ -179,6 +246,10 @@ show_header() {
 
     local svg_file=""
     svg_file=$(find "$REPO_DIR" -maxdepth 2 \( -iname "*nixos*.svg" -o -iname "*nix*.svg" \) 2>/dev/null | head -n 1)
+    if [[ -n "$svg_file" ]] && is_lfs_pointer "$svg_file"; then
+        # Arquivo é só um ponteiro do Git LFS não resolvido — segue sem logo.
+        svg_file=""
+    fi
 
     if [ "$term_width" -ge 80 ]; then
         if [[ -n "$svg_file" && -n "$CHAFA_BIN" ]]; then
@@ -886,7 +957,7 @@ else
 fi
 
 echo -e "${YELLOW}Gerando hardware.nix da máquina física...${NC}"
-nixos-generate-config --root /mnt
+run_nixos_tool nixos-generate-config --root /mnt
 cp /mnt/etc/nixos/hardware-configuration.nix "$REPO_DIR/modules/hosts/$HOSTNAME/hardware.nix"
 
 echo -e "${YELLOW}Copiando seu repositório MyNixOs para /mnt/home/$USERNAME/MyNixOs...${NC}"
@@ -898,7 +969,7 @@ echo -e "${YELLOW}Executando pré-build visual da configuração via 'nh'...${NC
 nix run github:viperML/nh -- build "$REPO_DIR#$HOSTNAME" --store /mnt || echo -e "${YELLOW}Aviso: pré-build via 'nh' falhou ou foi pulado; prosseguindo com nixos-install.${NC}"
 
 echo -e "${GREEN}${BOLD}Instalando o NixOS no disco...${NC}"
-nixos-install --flake "/mnt/home/$USERNAME/MyNixOs#$HOSTNAME" --option max-jobs "$CUSTOM_JOBS" --option cores "$CUSTOM_CORES"
+run_nixos_tool nixos-install --flake "/mnt/home/$USERNAME/MyNixOs#$HOSTNAME" --option max-jobs "$CUSTOM_JOBS" --option cores "$CUSTOM_CORES"
 
 echo -e "\n${GREEN}${BOLD}======================================================================"
 echo -e "  🎉 INSTALAÇÃO CONCLUÍDA COM SUCESSO!                              "
