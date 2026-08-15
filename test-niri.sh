@@ -160,6 +160,23 @@ if ! command -v nix &>/dev/null; then
     hash -r
 fi
 
+# --- Precisa de nixGL? ---
+# Fora do NixOS, o Mesa que vem do /nix/store não sabe achar o driver de GPU
+# do sistema hospedeiro (a "colagem" em /run/opengl-driver só existe no
+# NixOS de verdade), e o Niri (via winit) explode com "Egl(DisplayNotSupported)"
+# na hora de abrir a janela. O nixGL resolve isso "encaixando" o driver
+# real do sistema nos binários vindos do Nix.
+NIXGL_WRAPPER=""
+if [[ ! -f /etc/NIXOS ]]; then
+    if lsmod 2>/dev/null | grep -q '^nvidia ' || command -v nvidia-smi &>/dev/null; then
+        NIXGL_WRAPPER="nixGLNvidia" # driver proprietário da NVIDIA
+    else
+        NIXGL_WRAPPER="nixGLIntel"  # cobre Mesa em geral: Intel, AMD, nouveau
+    fi
+    echo -e "${YELLOW}Sistema não-NixOS detectado — usando nixGL ($NIXGL_WRAPPER) pra habilitar OpenGL/EGL.${NC}"
+    PKGS+=("github:nix-community/nixGL#$NIXGL_WRAPPER")
+fi
+
 # --- Pasta de configs efêmera ---
 TMP_CFG="$(mktemp -d -t niri-test-cfg.XXXXXX)"
 cleanup() {
@@ -202,9 +219,26 @@ echo
 echo -e "${YELLOW}Baixando pacotes (pode demorar na primeira vez) e abrindo o Niri...${NC}"
 echo
 
+NIX_SHELL_FLAGS=(--extra-experimental-features "nix-command flakes")
+if [[ -n "$NIXGL_WRAPPER" ]]; then
+    NIX_SHELL_FLAGS+=(--impure) # exigido pelo nixGL (detecta libs do host em runtime)
+fi
+
+# Com nixGL, o Mesa por padrão tenta a plataforma GBM primeiro (o nó DRM/KMS
+# "mestre" de display) — que já está em uso exclusivo pelo compositor real da
+# sessão do host, e falha (amdgpu_query_info(ACCEL_WORKING) failed / EACCES),
+# caindo pro llvmpipe (renderização por software, lento e às vezes quebra o
+# winit). Forçar EGL_PLATFORM=wayland pula direto pra plataforma que
+# realmente funciona rodando aninhado dentro de outro compositor.
+ENV_PREFIX=()
+if [[ -n "$NIXGL_WRAPPER" ]]; then
+    ENV_PREFIX+=(EGL_PLATFORM=wayland)
+fi
+
 XDG_CONFIG_HOME="$TMP_CFG" \
 STARSHIP_CONFIG="$TMP_CFG/starship/starship.toml" \
-    nix --extra-experimental-features "nix-command flakes" shell "${PKGS[@]}" -c niri
+    env "${ENV_PREFIX[@]}" \
+    nix "${NIX_SHELL_FLAGS[@]}" shell "${PKGS[@]}" -c ${NIXGL_WRAPPER:+"$NIXGL_WRAPPER"} niri
 
 # Ao sair do niri (ou fechar a janela), o "trap cleanup EXIT" acima já cuida
 # de apagar $TMP_CFG automaticamente.
