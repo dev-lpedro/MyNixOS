@@ -30,5 +30,6 @@
                 }
             }
         }
-    }
+    },
+    "git.autofetch": true
 }

@@ -1,48 +1,86 @@
-
 # MyNixOs
 
-Meu repositório pessoal com a minha configuração do NixOS. Projetado para um notebook com gráficos híbridos (Intel + NVIDIA), utilizando o compositor **Niri** com a **Noctalia v4** configurada, suporte à **Noctalia v5** (para testes/futura migração) e o **KDE Plasma 6** como *fallback*. O sistema foi pensado para rodar sobre o sistema de arquivos **Btrfs**.
+Meu repositório pessoal com a minha configuração do NixOS. Projetado para um notebook com gráficos híbridos (Intel + NVIDIA), utilizando o compositor **Niri** com a **Noctalia v4** configurada, suporte à **Noctalia v5** (para testes/futura migração), terminal **kitty** + **fish** + **starship**, e sistema de arquivos **Btrfs**.
 
-Se quiser rodar ou testar no seu computador, basta seguir o passo a passo abaixo:
+Host atual: `fakeNixOs` · Usuário: `leonardo`
 
 ---
 
 # 🚀 Como Usar
 
-## 1. Testar em Máquina Virtual (Sem Formatar)
+Existem três formas de usar este repositório, dependendo de onde você está partindo:
 
-Ideal para testar a interface e os atalhos dentro do CachyOS, Arch ou qualquer outra distro sem alterar o seu sistema atual.bash
-
-### 1. Construir a imagem da VM
-```
-nix build .#nixosConfigurations.myMachine.config.system.build.vm
-```
-### 2. Executar a VM
-```
-./result/bin/run-nitro-nixos-vm
-```
-> *Na tela de login do SDDM dentro da VM, selecione a sessão **Plasma**.* (Niri não funciona atualmente na vm)
+| Sua situação | O que fazer |
+|---|---|
+| Já tenho o NixOS instalado nesta máquina | [1. Aplicar/atualizar a configuração](#1-já-estou-no-nixos-aplicar-ou-atualizar) |
+| Quero instalar o NixOS do zero num disco | [2. Instalação completa](#2-instalação-completa-em-um-disco-novo) |
+| Só quero ver o Niri + Noctalia + kitty funcionando, sem instalar nada | [3. Testar em outro sistema (efêmero)](#3-testar-em-outro-sistema-sem-instalar-nada) |
 
 ---
 
-## 2. Instalar / Aplicar no NixOS Nativo (Hardware Real)
-Para quando você estiver rodando o NixOS diretamente na máquina física:
+## 1. Já estou no NixOS (aplicar ou atualizar)
+
+Se a máquina já está rodando essa configuração (ou uma anterior) e você só quer aplicar mudanças que fez no repositório:
 
 ```bash
-# Reconstruir e aplicar as alterações no boot
-sudo nixos-rebuild switch --flake .#myMachine
+# Reconstrói e aplica as alterações, define como padrão no boot
+sudo nixos-rebuild switch --flake .#fakeNixOs
 
-# Ou testar temporariamente sem salvar no bootloader
-sudo nixos-rebuild test --flake .#myMachine
+# Ou testa temporariamente (some no próximo reboot, não mexe no bootloader)
+sudo nixos-rebuild test --flake .#fakeNixOs
+```
+
+Prefere uma saída mais bonita, com diff das mudanças antes de aplicar?
+
+```bash
+nix run nixpkgs#nh -- os build .#fakeNixOs   # só builda e mostra o que vai mudar
+nix run nixpkgs#nh -- os switch .#fakeNixOs  # builda, mostra o diff e aplica
 ```
 
 ---
 
-### 3. Usar Apenas as Configurações de Usuário (Home Manager Standalone)
+## 2. Instalação completa em um disco novo
 
-Para aplicar as configurações do Niri, Noctalia e aplicativos de usuário no CachyOS, Arch ou Ubuntu sem instalar o NixOS completo:
+Para formatar um disco (interno ou externo) e instalar o NixOS com esta configuração do zero. Funciona tanto de dentro de um **live ISO do NixOS** quanto de **outra distro** (ex.: CachyOS, Arch) — o script detecta o que falta e busca via Nix automaticamente, sem precisar instalar nada permanente no sistema hospedeiro além do próprio Nix (se ainda não existir).
 
 ```bash
-nix run github:nix-community/home-manager -- switch --flake .#leonardo
-
+sudo ./install.sh
 ```
+
+O instalador é interativo e guia você por três modos:
+
+1. **Formatar um disco inteiro** (via Disko) — apaga tudo no disco escolhido.
+2. **Instalar em espaço livre** (dual-boot no mesmo disco, ao lado de outro SO).
+3. **Usar partições já criadas** (você já tem uma EFI e uma Btrfs prontas).
+
+> ⚠️ **Confira o disco de destino com atenção antes de confirmar** — o Modo 1 apaga o disco inteiro.
+
+Quer só simular, sem tocar em nada de verdade (útil pra revisar o fluxo antes de rodar por real)?
+
+```bash
+./install.sh --test
+```
+
+---
+
+## 3. Testar em outro sistema (sem instalar nada)
+
+Quer só ver o Niri + Noctalia + kitty + fish/starship funcionando — numa janela do seu desktop atual, no Linux Mint, Ubuntu, ou qualquer outra distro — sem instalar o NixOS e sem tocar nas suas configs reais?
+
+```bash
+git clone <este-repositório> ~/MyNixOs   # se ainda não tiver uma cópia local
+cd ~/MyNixOs
+./test-niri.sh
+```
+
+O Niri abre **dentro de uma janela** no seu desktop atual (não toma conta da tela). Kitty, Noctalia, fish e starship rodam com as mesmas configs deste repositório, mas numa cópia temporária — seu `~/.config` de verdade nunca é tocado. Os binários (niri, kitty, noctalia-shell...) rodam via `nix shell`, ficando só em cache no `/nix/store`.
+
+Pra sair: `Ctrl+Alt+Delete` ou feche a janela — a cópia temporária de configs é apagada automaticamente.
+
+Se o script precisou instalar o Nix nessa máquina só pra esse teste e você quiser reverter tudo depois:
+
+```bash
+./test-niri.sh uninstall
+```
+
+> Se o Nix já existia por outro motivo, esse comando não mexe nele — só limpa marcas de estado deste script e sugere `nix-collect-garbage -d` pra liberar espaço.

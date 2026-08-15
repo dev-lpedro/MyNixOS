@@ -966,7 +966,10 @@ cp -r "$REPO_DIR" "/mnt/home/$USERNAME/MyNixOs"
 chown -R 1000:100 "/mnt/home/$USERNAME/MyNixOs"
 
 echo -e "${YELLOW}Executando pré-build visual da configuração via 'nh'...${NC}"
-nix run github:viperML/nh -- build "$REPO_DIR#$HOSTNAME" --store /mnt || echo -e "${YELLOW}Aviso: pré-build via 'nh' falhou ou foi pulado; prosseguindo com nixos-install.${NC}"
+# 'nh' não tem subcomando 'build' na raiz — o comando certo é 'nh os build'
+# (o antigo viperML/nh está sem manutenção; nix-community/nh é o fork atual
+# e já está empacotado no nixpkgs, então dá pra puxar via nixpkgs mesmo).
+nix run nixpkgs#nh -- os build "$REPO_DIR#$HOSTNAME" --store /mnt || echo -e "${YELLOW}Aviso: pré-build via 'nh' falhou ou foi pulado; prosseguindo com nixos-install.${NC}"
 
 echo -e "${GREEN}${BOLD}Instalando o NixOS no disco...${NC}"
 run_nixos_tool nixos-install --flake "/mnt/home/$USERNAME/MyNixOs#$HOSTNAME" --option max-jobs "$CUSTOM_JOBS" --option cores "$CUSTOM_CORES"
