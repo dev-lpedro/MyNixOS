@@ -19,5 +19,11 @@
     starship
 
     neovim
+
+    gearlever
+
+    clonehero
+
+    dusklight
   ];
 }
