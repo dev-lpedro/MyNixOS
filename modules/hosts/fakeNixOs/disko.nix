@@ -7,7 +7,7 @@
       main = {
         type = "disk";
         # Nome padrão do dispositivo (pode ser sobrescrito via CLI se for um HD externo/SATA)
-        device = "/dev/sda";
+        device = "/dev/nvme0n1";
         content = {
           type = "gpt";
           partitions = {

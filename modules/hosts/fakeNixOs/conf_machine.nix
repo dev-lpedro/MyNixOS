@@ -17,6 +17,67 @@
   nixpkgs.config.allowUnfree = true;
 
   # ==========================================
+  # ANIMAÇÃO DE BOOT (Logo NixOS + Mac-Style)
+  # ==========================================
+  boot.plymouth = {
+    enable = true;
+    theme = "mac-style";
+    themePackages = [pkgs.mac-style-plymouth];
+  };
+
+  boot.initrd.kernelModules = ["i915"];
+
+  # BOOT SILENCIOSO (Foco total na animação central)
+  boot.consoleLogLevel = 0;
+  boot.initrd.verbose = false;
+  boot.kernelParams = [
+    "quiet"
+    "splash"
+    "boot.shell_on_fail"
+    "loglevel=0"
+    "rd.systemd.show_status=false"
+    "rd.udev.log_level=0"
+    "udev.log_priority=0"
+    "nvidia-drm.modeset=1"
+    "transparent_hugepage=madvise"
+    "preempt=full"
+  ];
+
+  # ==========================================
+  # BOOTLOADER E KERNEL
+  # ==========================================
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.grub.enable = false;
+
+  boot.kernelPackages = pkgs.linuxPackages_zen; #kernel zen
+  boot.kernelModules = ["tcp_bbr"];
+
+  # Otimizações de Kernel (Sysctl)
+  boot.kernel.sysctl = {
+    "kernel.split_lock_mitigate" = 0; # Corrige quedas de FPS em jogos
+    "kernel.nmi_watchdog" = 0; # Economiza ciclos de CPU
+    "net.core.netdev_max_backlog" = 4096;
+    "fs.file-max" = 2097152;
+    "net.ipv4.tcp_congestion_control" = "bbr"; # Algoritmo BBR para menor latência de rede
+  };
+
+  # ==========================================
+  # VARIÁVEIS DE AMBIENTE (Shader Cache NVIDIA/Mesa)
+  # ==========================================
+  environment.sessionVariables = {
+    # Para GPUs Intel e AMD (Mesa)
+    MESA_SHADER_CACHE_MAX_SIZE = "12G";
+
+    # Para GPUs NVIDIA (Driver Proprietário)
+    __GL_SHADER_DISK_CACHE = "1";
+    __GL_SHADER_DISK_CACHE_SIZE = "12000000000"; # ~12 GB em Bytes
+    __GL_SHADER_DISK_CACHE_SKIP_CLEANUP = "1";
+
+    GSK_RENDERER = "gl";
+  };
+
+  # ==========================================
   # AMBIENTES DE TRABALHO E TELA DE LOGIN
   # ==========================================
   services.desktopManager.plasma6.enable = true; # KDE Plasma 6 instalado para fallback
@@ -57,27 +118,44 @@
   services.qemuGuest.enable = true;
   services.spice-vdagentd.enable = true;
 
-  # ==========================================
-  # BOOTLOADER E KERNEL
-  # ==========================================
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.grub.enable = false;
-
-  boot.kernelPackages = pkgs.linuxPackages_zen; #kernel zen
-
   # Escalonador eBPF para o hardware real
   #services.scx.enable = true;
   #services.scx.scheduler = "scx_rusty";
 
-  # Parâmetros de desempenho e suporte DRM no Kernel
-  boot.kernelParams = [
-    "quiet"
-    "splash"
-    "transparent_hugepage=always"
-    "preempt=full"
-    "nvidia-drm.modeset=1"
-  ];
+  # ==========================================
+  # OTIMIZAÇÕES DE DESEMPENHO E MANUTENÇÃO
+  # ==========================================
+  # Priorização automática de processos estilo CachyOS
+  services.ananicy = {
+    enable = true;
+    package = pkgs.ananicy-cpp;
+    rulesProvider = pkgs.ananicy-rules-cachyos;
+  };
+
+  # Proteção contra congelamento por estouro de RAM
+  services.earlyoom = {
+    enable = true;
+    freeSwapThreshold = 2;
+    freeMemThreshold = 2;
+    extraArgs = [
+      "-g"
+      "--avoid"
+      "'^(X|plasma.*|konsole|kwin|wayland|gnome.*|niri.*)$'"
+    ];
+  };
+
+  # Regras I/O para agendamento de armazenamento (HDD, SSD SATA e NVMe)
+  services.udev = {
+    enable = true;
+    extraRules = ''
+      # HDDs (Usa agendador BFQ)
+      ACTION=="add|change", KERNEL=="sd[a-z]*", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq"
+      # SSDs SATA (Usa mq-deadline)
+      ACTION=="add|change", KERNEL=="sd[a-z]*|mmcblk[0-9]*", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="mq-deadline"
+      # NVMe SSDs (Usa agendador direto 'none')
+      ACTION=="add|change", KERNEL=="nvme[0-9]*", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="none"
+    '';
+  };
 
   # Manutenção automática e verificação de erros no Btrfs
   services.btrfs.autoScrub = {
@@ -123,10 +201,27 @@
   };
 
   # ==========================================
-  # HIBERNAÇÃO AUTOMÁTICA
+  # HIBERNAÇÃO E RESERVA DE MEMÓRIA
   # ==========================================
   boot.initrd.systemd.enable = true;
   powerManagement.enable = true;
+
+  # Serviço dinâmico para reservar 1% de RAM para emergências do kernel
+  systemd.services.set-min-free-mem = {
+    description = "Set vm.min_free_kbytes dynamically";
+    wantedBy = ["multi-user.target"];
+    after = ["local-fs.target"];
+    serviceConfig = {
+      User = "root";
+      RemainAfterExit = true;
+    };
+    script = ''
+      TOTAL_MEM=$(${pkgs.gawk}/bin/awk '/MemTotal/ {printf "%.0f", $2 * 0.01}' /proc/meminfo)
+      if [ -n "$TOTAL_MEM" ] && [ "$TOTAL_MEM" -gt 0 ]; then
+        ${pkgs.sysctl}/bin/sysctl -w vm.min_free_kbytes=$TOTAL_MEM
+      fi
+    '';
+  };
 
   # ==========================================
   # ZRAM (4 GB de Swap Comprimida na RAM)

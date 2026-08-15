@@ -12,37 +12,37 @@
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
-  boot.initrd.availableKernelModules = ["xhci_pci" "thunderbolt" "vmd" "nvme" "usbhid" "usb_storage"];
+  boot.initrd.availableKernelModules = ["xhci_pci" "thunderbolt" "vmd" "nvme" "usbhid" "usb_storage" "sd_mod"];
   boot.initrd.kernelModules = [];
   boot.kernelModules = ["kvm-intel"];
   boot.extraModulePackages = [];
 
   fileSystems."/" = {
-    device = "/dev/disk/by-uuid/959114f4-0544-4dbe-af0b-00d84154277f";
+    device = "/dev/disk/by-uuid/4916d6b7-0c44-4e7d-aa0a-5132473a4abb";
     fsType = "btrfs";
     options = ["subvol=@"];
   };
 
   fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/64B9-2A0D";
+    device = "/dev/disk/by-uuid/D6B8-2A41";
     fsType = "vfat";
     options = ["fmask=0077" "dmask=0077"];
   };
 
   fileSystems."/home" = {
-    device = "/dev/disk/by-uuid/959114f4-0544-4dbe-af0b-00d84154277f";
+    device = "/dev/disk/by-uuid/4916d6b7-0c44-4e7d-aa0a-5132473a4abb";
     fsType = "btrfs";
     options = ["subvol=@home"];
   };
 
   fileSystems."/nix" = {
-    device = "/dev/disk/by-uuid/959114f4-0544-4dbe-af0b-00d84154277f";
+    device = "/dev/disk/by-uuid/4916d6b7-0c44-4e7d-aa0a-5132473a4abb";
     fsType = "btrfs";
     options = ["subvol=@nix"];
   };
 
   fileSystems."/var/log" = {
-    device = "/dev/disk/by-uuid/959114f4-0544-4dbe-af0b-00d84154277f";
+    device = "/dev/disk/by-uuid/4916d6b7-0c44-4e7d-aa0a-5132473a4abb";
     fsType = "btrfs";
     options = ["subvol=@log"];
   };

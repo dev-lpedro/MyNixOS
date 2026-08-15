@@ -22,6 +22,13 @@
       })
       */
 
+      # Overlay do Tema Mac-Style do Plymouth
+      ({inputs, ...}: {
+        nixpkgs.overlays = [
+          inputs.mac-style-plymouth.overlays.default
+        ];
+      })
+
       # Módulo integrado do Home Manager
       inputs.home-manager.nixosModules.home-manager
 

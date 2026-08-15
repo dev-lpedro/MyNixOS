@@ -1,11 +1,15 @@
-{ pkgs, lib, config, inputs, ... }:
-
 {
+  pkgs,
+  lib,
+  config,
+  inputs,
+  ...
+}: {
   # https://devenv.sh/basics/
   env.GREET = "devenv";
 
   # https://devenv.sh/packages/
-  packages = [ pkgs.git pkgs.git-lfs pkgs.alejandra ];
+  packages = [pkgs.git pkgs.git-lfs pkgs.alejandra];
 
   pre-commit.hooks.alejandra.enable = true;
 

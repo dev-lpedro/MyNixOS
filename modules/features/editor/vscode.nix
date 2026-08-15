@@ -1,5 +1,9 @@
-{ pkgs, config, inputs, ... }: {
-
+{
+  pkgs,
+  config,
+  inputs,
+  ...
+}: {
   # Instala o VSCodium e VS Code no sistema
   environment.systemPackages = with pkgs; [
     vscodium
@@ -13,9 +17,9 @@
     useGlobalPkgs = true;
     useUserPackages = true;
     backupFileExtension = "backup";
-    extraSpecialArgs = { inherit inputs; };
+    extraSpecialArgs = {inherit inputs;};
 
-    users.leonardo = { config, ... }: {
+    users.leonardo = {config, ...}: {
       home.stateVersion = "24.11";
 
       xdg.configFile."VSCodium/User/settings.json" = {
