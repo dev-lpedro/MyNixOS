@@ -220,8 +220,11 @@ echo -e "${YELLOW}Baixando pacotes (pode demorar na primeira vez) e abrindo o Ni
 echo
 
 NIX_SHELL_FLAGS=(--extra-experimental-features "nix-command flakes")
+NIX_SHELL_POST_FLAGS=()
 if [[ -n "$NIXGL_WRAPPER" ]]; then
-    NIX_SHELL_FLAGS+=(--impure) # exigido pelo nixGL (detecta libs do host em runtime)
+    # --impure precisa vir DEPOIS de "shell" + pacotes, não junto das flags
+    # globais antes do subcomando — o nix não reconhece nessa posição.
+    NIX_SHELL_POST_FLAGS+=(--impure) # exigido pelo nixGL (detecta libs do host em runtime)
 fi
 
 # Com nixGL, o Mesa por padrão tenta a plataforma GBM primeiro (o nó DRM/KMS
@@ -238,7 +241,7 @@ fi
 XDG_CONFIG_HOME="$TMP_CFG" \
 STARSHIP_CONFIG="$TMP_CFG/starship/starship.toml" \
     env "${ENV_PREFIX[@]}" \
-    nix "${NIX_SHELL_FLAGS[@]}" shell "${PKGS[@]}" -c ${NIXGL_WRAPPER:+"$NIXGL_WRAPPER"} niri
+    nix "${NIX_SHELL_FLAGS[@]}" shell "${PKGS[@]}" "${NIX_SHELL_POST_FLAGS[@]}" -c ${NIXGL_WRAPPER:+"$NIXGL_WRAPPER"} niri
 
 # Ao sair do niri (ou fechar a janela), o "trap cleanup EXIT" acima já cuida
 # de apagar $TMP_CFG automaticamente.
